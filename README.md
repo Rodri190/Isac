@@ -6,12 +6,14 @@
 ## Nombre de grupo
 Null Pointers
 
-## Integrantes Fuentes 
-Cejas Jhonatan Albert
-Gil Rivera Brisa Valeria
-Hidalgo Cespedes Diana Kelly
-Paniagua Camacho Rodrigo
-Zeballos Arancibia Dennis Edson
+## Integrantes del Equipo
+
+- **Cejas Jhonatan Albert**: Desarrollador
+- **Gil Rivera Brisa Valeria**: QA
+- **Hidalgo Cespedes Diana Kelly**: QA
+- **Paniagua Camacho Rodrigo**: SCRUM Master
+- **Zeballos Arancibia Dennis Edson**: Desarrollador
+
 
 ## Descripción
 
