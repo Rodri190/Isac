@@ -1,18 +1,24 @@
-## Getting Started
+# Sistema de Información para la gestion de un Instituto Preuniversitario
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+## Número de grupo 
+10
 
-## Folder Structure
+## Nombre de grupo
+Null Pointers
 
-The workspace contains two folders by default, where:
+## Integrantes Fuentes 
+Cejas Jhonatan Albert
+Gil Rivera Brisa Valeria
+Hidalgo Cespedes Diana Kelly
+Paniagua Camacho Rodrigo
+Zeballos Arancibia Dennis Edson
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+## Descripción
 
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
-
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
-
-## Dependency Management
-
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+Se trata de un instituto preuniversitario que requiere un sistema integral de gestión que permita controlar
+acceso de estudiantes, docentes y personal administrativo, asignar horarios y materias a los
+docentes, inscribir estudiantes en los cursos correspondientes, generar reportes detallados
+sobre el rendimiento y cumplimiento de horarios, restringir accesos a áreas específicas
+según los roles de los usuarios, y que el administrador tenga control total sobre todas estas
+funciones, incluyendo la creación, modificación y eliminación de perfiles, así como la
+generación de reportes globales y la gestión de horarios y materias asignadas.
