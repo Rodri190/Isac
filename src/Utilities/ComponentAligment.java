@@ -8,29 +8,21 @@ public class ComponentAligment {
 
     }
 
-    public int alignHorizontalComponent(Component container, Component component){
-        if (container == null || component == null) {
-            throw new IllegalArgumentException("El contenedor o el componente no pueden ser nulos.");
-        }
-        
-        if (container.getWidth() <= 0 || component.getWidth() <= 0) {
+    public int alignHorizontalComponent(int containerWidth, int componentWidth){
+        if (containerWidth <= 1 || componentWidth <= 1) {
             throw new IllegalArgumentException("El ancho del contenedor y del componente deben ser mayores a 0.");
         }
-        
-        int aligment = (int) ((container.getWidth() - component.getWidth()) / 2);
+        int aligment = (int) ((containerWidth - componentWidth) / 2);
         return aligment;
     }
 
-    public int alignVerticalComponent(Component container, Component component){
-        if (container == null || component == null) {
-            throw new IllegalArgumentException("El contenedor o el componente no pueden ser nulos.");
-        }
+    public int alignVerticalComponent(int containerWidth, int componentWidth){
         
-        if (container.getWidth() <= 0 || component.getWidth() <= 0) {
+        if (containerWidth <= 1 || componentWidth <= 1) {
             throw new IllegalArgumentException("El ancho del contenedor y del componente deben ser mayores a 0.");
         }
         
-        int aligment = (int) ((container.getHeight() - component.getHeight()) / 2);
+        int aligment = (int) ((containerWidth - componentWidth) / 2);
         return aligment;
     }
 }
