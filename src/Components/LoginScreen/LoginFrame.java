@@ -8,7 +8,7 @@ public class LoginFrame extends JFrame {
     }
     
     private void initFrame(){
-        add(new LoginPanel());
+        add(new LoginPanel(this));
         add(new LoginImgPanel());
         setSize(1000, 700);
         setLocationRelativeTo(null);

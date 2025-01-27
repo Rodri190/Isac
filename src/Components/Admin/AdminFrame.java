@@ -12,6 +12,7 @@ public class AdminFrame extends JFrame {
         setLayout(null);
         setLocationRelativeTo(null);
         setVisible(true);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
         setResizable(false);
     }
 

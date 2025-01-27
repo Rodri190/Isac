@@ -12,6 +12,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -20,13 +21,15 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 
+import Components.Admin.AdminFrame;
+import UI.GradientBackground;
 import UI.GradientButton;
 import Utilities.ComponentAligment;
 import Utilities.ComponentStyler;
 import Utilities.Separador;
 
 public class LoginPanel extends JPanel {
-    private Color MAIN_COLOR = Color.decode("#ffffff");//2103B0
+    private Color MAIN_COLOR = Color.decode("#ffffff");// 2103B0
     private ComponentStyler styler;
     private ComponentAligment aligment;
     private Separador esp;
@@ -37,11 +40,15 @@ public class LoginPanel extends JPanel {
     private JPasswordField passField;
     private GradientButton loginBtn;
     private JTextField desviarFocusField;
+    private GradientBackground gradient;
+    private JFrame ventanaPrincipal;
 
-    public LoginPanel() {
+    public LoginPanel(JFrame ventanaPrincipal) {
+        this.ventanaPrincipal = ventanaPrincipal;
         styler = new ComponentStyler();
         esp = new Separador();
         aligment = new ComponentAligment();
+        gradient = new GradientBackground();
         setLayout(null);
         setSize(600, 800);
         setLocation(400, 0);
@@ -57,18 +64,13 @@ public class LoginPanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Graphics2D g2d = (Graphics2D) g;
-
-        Color colorStart = Color.decode("#E8113A");
-        Color colorEnd = Color.decode("#4A0075");
-
-        GradientPaint gradient = new GradientPaint(
-                0, 0, colorStart,
-                getWidth(), getHeight(), colorEnd
-        );
-
-        g2d.setPaint(gradient);
-        g2d.fillRect(0, 0, getWidth(), getHeight());
+        gradient.ponerFondoGradiente(
+                (Graphics2D) g,
+                this.getWidth(),
+                this.getHeight(),
+                Color.decode("#E8113A"),
+                Color.decode("#4A0075")
+            );
     }
 
     private void initComponents() {
@@ -225,6 +227,14 @@ public class LoginPanel extends JPanel {
             @Override
             public void mouseReleased(MouseEvent e) {
                 loginBtn.setBorder(new LineBorder(Color.decode("#ffffff"), 3));
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if(userField.getText().equals("admin123") && new String(passField.getPassword()).equals("123456")){
+                    ventanaPrincipal.dispose();
+                    new Components.Admin.AdminFrame();
+                }
             }
         });
     }
