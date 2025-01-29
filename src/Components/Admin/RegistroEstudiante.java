@@ -64,7 +64,7 @@ class RegistroEstudiante extends JPanel {
         lblFacultad.setForeground(Color.WHITE);
         lblFacultad.setBounds(430, 250, 100, 25);
         add(lblFacultad);
-        String[] facultades = {"Tecnología", "Ciencias", "Artes"};
+        String[] facultades = {"Tecnología", "Economia"};
         JComboBox<String> cbFacultad = new JComboBox<>(facultades);
         cbFacultad.setBounds(530, 250, 120, 25);
         add(cbFacultad);
