@@ -153,18 +153,6 @@ public class BarraLateral extends JPanel {
     }
 
     private void agregarVistaGeneral(){
-        botonesOpciones.get(1).addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e){
-                adminFrame.remove(adminPanel);
-                adminPanel =  new PanelCambiado();  
-                adminFrame.add(adminPanel);
-                adminFrame.repaint();
-                adminFrame.revalidate();
-                System.out.println("se cambio a otro");
-            }
-        });
-
         botonesOpciones.get(0).addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e){
@@ -174,6 +162,18 @@ public class BarraLateral extends JPanel {
                 adminFrame.repaint();
                 adminFrame.revalidate();
                 System.out.println("se cambio a admin");
+            }
+        });
+
+        botonesOpciones.get(1).addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e){
+                adminFrame.remove(adminPanel);
+                adminPanel =  new RegistroEstudiante();  
+                adminFrame.add(adminPanel);
+                adminFrame.repaint();
+                adminFrame.revalidate();
+                System.out.println("se cambio a otro");
             }
         });
     }
