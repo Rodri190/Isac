@@ -7,6 +7,8 @@ public class AdminFrame extends JFrame {
     private static final int ANCHO = 1200;
     
     public AdminFrame(){
+
+        add(new RegistroDocente());
         add(new BarraLateral(ALTURA));
         setSize(ANCHO, ALTURA);
         setLayout(null);
