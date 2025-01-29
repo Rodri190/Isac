@@ -17,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
+import javax.swing.event.MouseInputAdapter;
 
 import UI.GradientBackground;
 import Utilities.ComponentAligment;
@@ -105,19 +106,42 @@ public class BarraLateral extends JPanel {
     private void initBotones(){
         String[] texto = {"Vista General", "Agregar Docente", "Agregar Estudiante", "Agregar Materia"};
         String[] imgPath = {"vistaGeneral.png", "registrarDocente.png", "registrarEstudiante.png", "registrarDocente.png"};
+        BotonOpcion botonOpcion;
         for(int i = 0; i < 4; i++){
-            botonesOpciones.add(new BotonOpcion(texto[i], 
-                path + imgPath[i], 
-                getWidth() - 40, 
-                50,
-                aligment.alignHorizontalComponent(this.getWidth(), 
-                getWidth() - 40),
-                esp.separar(i == 0 ? logoLabel : botonesOpciones.get(i - 1), 20))
-            );
+            botonOpcion = new BotonOpcion(texto[i], 
+            path + imgPath[i], 
+            getWidth() - 40, 
+            50,
+            aligment.alignHorizontalComponent(this.getWidth(), 
+            getWidth() - 40),
+            esp.separar(i == 0 ? logoLabel : botonesOpciones.get(i - 1), 20));
+            botonesOpciones.add(botonOpcion);
             if(i == 0){
-                botonesOpciones.get(i).setBorder(new LineBorder(Color.white, 3));
+                botonOpcion.setBorder(new LineBorder(Color.white, 3));
             }
-            add(botonesOpciones.get(i));
+
+
+
+            // JLabel hover = new JLabel();
+            // hover.addMouseListener(new MouseInputAdapter() {
+            //     @Override
+            //     public void mouseEntered(MouseEvent e){
+            //         hover.setOpaque(true);
+            //         hover.setBackground(new Color(255, 255, 255, 128));
+            //     }
+
+            //     @Override
+            //     public void mouseExited(MouseEvent e){
+            //         hover.setOpaque(false);
+            //         // hover.setBackground(new Color(255, 255, 255, 128)); no considerar
+            //     }
+            // });
+            // hover.setBounds(0, 0, botonOpcion.getWidth(), botonOpcion.getHeight());
+            // botonOpcion.add(hover);
+
+
+            
+            add(botonOpcion);
         }
         agregarEventosAOpciones();
         agregarVistaGeneral();
@@ -169,11 +193,23 @@ public class BarraLateral extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e){
                 adminFrame.remove(adminPanel);
+                adminPanel =  new RegistroDocente();  
+                adminFrame.add(adminPanel);
+                adminFrame.repaint();
+                adminFrame.revalidate();
+                System.out.println("se cambio a docente");
+            }
+        });
+
+        botonesOpciones.get(2).addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e){
+                adminFrame.remove(adminPanel);
                 adminPanel =  new RegistroEstudiante();  
                 adminFrame.add(adminPanel);
                 adminFrame.repaint();
                 adminFrame.revalidate();
-                System.out.println("se cambio a otro");
+                System.out.println("se cambio a estudiante");
             }
         });
     }
