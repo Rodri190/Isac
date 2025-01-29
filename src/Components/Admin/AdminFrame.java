@@ -8,6 +8,7 @@ public class AdminFrame extends JFrame {
     
     public AdminFrame(){
         add(new BarraLateral(ALTURA));
+        add(new RegistroEstudiante());
         setSize(ANCHO, ALTURA);
         setLayout(null);
         setLocationRelativeTo(null);
