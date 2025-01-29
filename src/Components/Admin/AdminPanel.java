@@ -66,7 +66,7 @@ public class AdminPanel extends JPanel {
         String[] titulos = { "Total de estudiantes", "Total de docentes", "Total de cursos" };
         Color[] colores = { Color.decode("#8787f9"), Color.decode("#B370F3"), Color.decode("#EBCB3E") };
         String path = "src/Resources/img/";
-        String[] imagenes = { "registrarDocente.png", "registrarEstudiante.png", "registrarDocente.png" };
+        String[] imagenes = { "registrarDocente.png", "registrarEstudiante.png", "registrarMateria.png" };
         for (int i = 0; i < 3; i++) {
             gradient.ponerFondoGradienteRedondeado(
                     g,

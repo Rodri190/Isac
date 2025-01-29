@@ -31,10 +31,11 @@ public class BarraLateral extends JPanel {
     private ComponentAligment aligment;
     private GradientBackground gradient;
     private Separador esp;
-    private ArrayList<JLabel> botonesOpciones;
+    private ArrayList<BotonOpcion> botonesOpciones;
     private JPanel adminPanel;
     private JPanel panelDifuminado;
     private JFrame adminFrame;
+    private JLabel[] mascaras;
 
     public BarraLateral(int altura, AdminFrame adminFrame, AdminPanel adminPanel) {
         this.adminFrame = adminFrame;
@@ -43,6 +44,7 @@ public class BarraLateral extends JPanel {
         aligment = new ComponentAligment();
         gradient = new GradientBackground();
         botonesOpciones = new ArrayList<>();
+        mascaras = new JLabel[4];
         this.adminPanel = adminPanel;
         esp = new Separador();
         setBounds(0, 0, 300, altura);
@@ -52,27 +54,19 @@ public class BarraLateral extends JPanel {
     }
 
     private void initComponents() {
-        initPanelDifuminado();
         initLogoLabel();
         initBotones();
-    }
-
-    private void initPanelDifuminado(){
-        panelDifuminado = new JPanel();
-        panelDifuminado.setBackground(new Color(255, 255, 255, 128)); 
-        panelDifuminado.setBounds(0, 0, 0, 0); 
-        add(panelDifuminado);
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         gradient.ponerFondoGradiente(
-            (Graphics2D)g, // lo mismo
-            this.getWidth(), //lo mismo
-            this.getHeight(), // lo mismo
-            Color.decode("#E8113A"), //color 1 el que quieras
-            Color.decode("#4A0075") // color 2 el que quieras
+                (Graphics2D) g, // lo mismo
+                this.getWidth(), // lo mismo
+                this.getHeight(), // lo mismo
+                Color.decode("#E8113A"), // color 1 el que quieras
+                Color.decode("#4A0075") // color 2 el que quieras
         );
     }
 
@@ -82,10 +76,12 @@ public class BarraLateral extends JPanel {
             public void setText(String text) {
                 super.setText("Preuniversitario");
             }
+
             @Override
             public void setSize(int width, int height) {
                 super.setSize(250, 100);
             }
+
             @Override
             protected void paintComponent(Graphics g) {
                 Image imagen = new ImageIcon("src/Resources/img/logoAdminPanel.png").getImage();
@@ -103,72 +99,71 @@ public class BarraLateral extends JPanel {
         add(logoLabel);
     }
 
-    private void initBotones(){
-        String[] texto = {"Vista General", "Agregar Docente", "Agregar Estudiante", "Agregar Materia"};
-        String[] imgPath = {"vistaGeneral.png", "registrarDocente.png", "registrarEstudiante.png", "registrarDocente.png"};
+    private void initBotones() {
+        String[] texto = { "Vista General", "Agregar Docente", "Agregar Estudiante", "Agregar Materia" };
+        String[] imgPath = { "vistaGeneral.png", "registrarDocente.png", "registrarEstudiante.png",
+                "registrarMateria.png" };
         BotonOpcion botonOpcion;
-        for(int i = 0; i < 4; i++){
-            botonOpcion = new BotonOpcion(texto[i], 
-            path + imgPath[i], 
-            getWidth() - 40, 
-            50,
-            aligment.alignHorizontalComponent(this.getWidth(), 
-            getWidth() - 40),
-            esp.separar(i == 0 ? logoLabel : botonesOpciones.get(i - 1), 20));
+        for (int i = 0; i < 4; i++) {
+            botonOpcion = new BotonOpcion(texto[i],
+                    path + imgPath[i],
+                    getWidth() - 40,
+                    50,
+                    aligment.alignHorizontalComponent(this.getWidth(),
+                            getWidth() - 40),
+                    esp.separar(i == 0 ? logoLabel : botonesOpciones.get(i - 1), 20));
             botonesOpciones.add(botonOpcion);
-            if(i == 0){
-                botonOpcion.setBorder(new LineBorder(Color.white, 3));
-            }
 
+            // para las mascaras
+            JLabel mask = new JLabel();
+            mask.setOpaque(true);
+            mask.setBackground(new Color(255, 255, 255, 128));
+            mask.setBounds(botonOpcion.getX(), botonOpcion.getY(), botonOpcion.getWidth(), botonOpcion.getHeight());
 
-
-            // JLabel hover = new JLabel();
-            // hover.addMouseListener(new MouseInputAdapter() {
-            //     @Override
-            //     public void mouseEntered(MouseEvent e){
-            //         hover.setOpaque(true);
-            //         hover.setBackground(new Color(255, 255, 255, 128));
-            //     }
-
-            //     @Override
-            //     public void mouseExited(MouseEvent e){
-            //         hover.setOpaque(false);
-            //         // hover.setBackground(new Color(255, 255, 255, 128)); no considerar
-            //     }
-            // });
-            // hover.setBounds(0, 0, botonOpcion.getWidth(), botonOpcion.getHeight());
-            // botonOpcion.add(hover);
-
-
-            
             add(botonOpcion);
+            mascaras[i] = mask;
+
+            if (i == 0) {
+                add(mask);
+            }
         }
         agregarEventosAOpciones();
         agregarVistaGeneral();
     }
 
-    private void agregarEventosAOpciones(){
-        for(JLabel boton : botonesOpciones){
+    private void agregarEventosAOpciones() {
+        for (BotonOpcion boton : botonesOpciones) {
             boton.addMouseListener(new java.awt.event.MouseAdapter() {
-                // @Override
-                // public void mouseEntered(java.awt.event.MouseEvent evt) {
-                //     panelDifuminado.setBounds(boton.getBounds());
-                //     boton.setBorder(new LineBorder(Color.decode("#ffffff"), 3));
-                // }
-                // @Override
-                // public void mouseExited(java.awt.event.MouseEvent evt) {
-                //     panelDifuminado.setBounds(0,0,0,0);
-                //     boton.setBorder(null);
-                // }
+                @Override
+                public void mouseEntered(java.awt.event.MouseEvent evt) {
+                    // panelDifuminado.setBounds(boton.getBounds());
+                    if(!boton.isActive()){
+                        boton.setBorder(new LineBorder(Color.decode("#ffffff"), 3));
+                    }
+                }
+
+                @Override
+                public void mouseExited(java.awt.event.MouseEvent evt) {
+                    // panelDifuminado.setBounds(0, 0, 0, 0);
+                    if(!boton.isActive()){
+                        boton.setBorder(null);
+                    }
+                }
 
                 @Override
                 public void mouseClicked(java.awt.event.MouseEvent evt) {
                     // panelDifuminado.setBounds(boton.getBounds());
                     // boton.setOpaque(false);
+                    // boton.
+                    boton.setActive(true);
                     boton.setBorder(new LineBorder(Color.white, 3));
-                    for (JLabel btn : botonesOpciones) {
-                        if(btn != boton){
+                    for (BotonOpcion btn : botonesOpciones) {
+                        if (btn != boton) {
+                            boton.setActive(false);
                             btn.setBorder(null);
+                            remove(mascaras[botonesOpciones.indexOf(btn)]);
+                        }else{
+                            add(mascaras[botonesOpciones.indexOf(btn)]);
                         }
                     }
                 }
@@ -176,12 +171,12 @@ public class BarraLateral extends JPanel {
         }
     }
 
-    private void agregarVistaGeneral(){
+    private void agregarVistaGeneral() {
         botonesOpciones.get(0).addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e){
+            public void mouseClicked(MouseEvent e) {
                 adminFrame.remove(adminPanel);
-                adminPanel =  new AdminPanel(getHeight());  
+                adminPanel = new AdminPanel(getHeight());
                 adminFrame.add(adminPanel);
                 adminFrame.repaint();
                 adminFrame.revalidate();
@@ -191,9 +186,9 @@ public class BarraLateral extends JPanel {
 
         botonesOpciones.get(1).addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e){
+            public void mouseClicked(MouseEvent e) {
                 adminFrame.remove(adminPanel);
-                adminPanel =  new RegistroDocente();  
+                adminPanel = new RegistroDocente();
                 adminFrame.add(adminPanel);
                 adminFrame.repaint();
                 adminFrame.revalidate();
@@ -203,9 +198,9 @@ public class BarraLateral extends JPanel {
 
         botonesOpciones.get(2).addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e){
+            public void mouseClicked(MouseEvent e) {
                 adminFrame.remove(adminPanel);
-                adminPanel =  new RegistroEstudiante();  
+                adminPanel = new RegistroEstudiante();
                 adminFrame.add(adminPanel);
                 adminFrame.repaint();
                 adminFrame.revalidate();
