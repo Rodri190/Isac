@@ -9,6 +9,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.LinearGradientPaint;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -31,6 +32,9 @@ import UI.GradientBackground;
 import UI.GradientPanel;
 import Utilities.ComponentStyler;
 import Utilities.Fuente;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class AdminPanel extends JPanel {
     private GradientBackground gradient;
@@ -179,6 +183,15 @@ public class AdminPanel extends JPanel {
         estilizarScrollBar();
 
         add(scrollPane);
+    }
+
+    public void crearNuevaPerona(Persona persona){
+        LocalDate fechaActual = LocalDate.now();
+        
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        
+        String fechaFormateada = fechaActual.format(formatter);
+        modelo.addRow(new Object[]{persona.getNombre(), persona.getCorreo(), persona.getTipoPersona(),fechaFormateada , persona.getEstado()});
     }
 
     private void estilizarTablaEncabezado() {
