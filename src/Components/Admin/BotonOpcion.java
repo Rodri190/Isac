@@ -18,10 +18,12 @@ public class BotonOpcion extends JLabel {
     private String imgPath;
     private ComponentStyler styler;
     private Fuente fuente;
+    private boolean isActive;
 
     public BotonOpcion(String texto, String imgPath, int ancho, int alto, int x, int y) {
         this.texto = texto;
         this.imgPath = imgPath;
+        isActive = false;
         styler = new ComponentStyler();
         fuente = new Fuente();
         styler.style(this, ancho, alto, null, "normal", 0, Color.decode("#ffffff"));//el tamanio de fuente aqui no cuenta
@@ -58,5 +60,13 @@ public class BotonOpcion extends JLabel {
         int y = (getHeight() - altoTexto) / 2 + metrics.getAscent();
 
         g.drawString(texto, x, y);
+    }
+
+    public void setActive(boolean isActive){
+        this.isActive = isActive;
+    }
+
+    public boolean isActive(){
+        return isActive;
     }
 }
