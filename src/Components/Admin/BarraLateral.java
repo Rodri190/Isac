@@ -23,6 +23,7 @@ import UI.GradientBackground;
 import Utilities.ComponentAligment;
 import Utilities.ComponentStyler;
 import Utilities.Separador;
+import database.Query;
 
 public class BarraLateral extends JPanel {
     private String path;
@@ -32,21 +33,21 @@ public class BarraLateral extends JPanel {
     private GradientBackground gradient;
     private Separador esp;
     private ArrayList<BotonOpcion> botonesOpciones;
-    private AdminPanel adminPanel;
-    private JPanel registroPanel;
+    private JPanel panelActual;
     private JFrame adminFrame;
     private JLabel[] mascaras;
+    private Query query;
 
-    public BarraLateral(int altura, AdminFrame adminFrame, AdminPanel adminPanel) {
+    public BarraLateral(int altura, AdminFrame adminFrame, JPanel panelActual) {
         this.adminFrame = adminFrame;
-        registroPanel = new JPanel();
+        query = new Query();
         path = "src/Resources/img/";
         styler = new ComponentStyler();
         aligment = new ComponentAligment();
         gradient = new GradientBackground();
         botonesOpciones = new ArrayList<>();
         mascaras = new JLabel[4];
-        this.adminPanel = adminPanel;
+        this.panelActual = panelActual;
         esp = new Separador();
         setBounds(0, 0, 300, altura);
         setBackground(Color.decode("#ff0000"));
@@ -175,8 +176,9 @@ public class BarraLateral extends JPanel {
         botonesOpciones.get(0).addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                adminFrame.remove(registroPanel);
-                adminFrame.add(adminPanel);
+                adminFrame.remove(panelActual);
+                panelActual = new AdminPanel(getHeight(), query.selectTodasLasPersonas());
+                adminFrame.add(panelActual);
                 adminFrame.repaint();
                 adminFrame.revalidate();
                 System.out.println("se cambio a admin");
@@ -186,10 +188,9 @@ public class BarraLateral extends JPanel {
         botonesOpciones.get(1).addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                adminFrame.remove(adminPanel);
-                adminFrame.remove(registroPanel);
-                registroPanel = (RegistroDocente)new RegistroDocente(getThis());
-                adminFrame.add(registroPanel);
+                adminFrame.remove(panelActual);
+                panelActual = (RegistroDocente)new RegistroDocente(getThis(), query);
+                adminFrame.add(panelActual);
                 adminFrame.repaint();
                 adminFrame.revalidate();
                 System.out.println("se cambio a docente");
@@ -199,19 +200,14 @@ public class BarraLateral extends JPanel {
         botonesOpciones.get(2).addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                adminFrame.remove(adminPanel);
-                adminFrame.remove(registroPanel);
-                registroPanel = (RegistroEstudiante)new RegistroEstudiante(getThis());
-                adminFrame.add(registroPanel);
+                adminFrame.remove(panelActual);
+                panelActual = (RegistroEstudiante)new RegistroEstudiante(getThis(), query);
+                adminFrame.add(panelActual);
                 adminFrame.repaint();
                 adminFrame.revalidate();
                 System.out.println("se cambio a estudiante");
             }
         });
-    }
-
-    public void crearNuevaPersona(Persona persona){
-        adminPanel.crearNuevaPerona(persona);
     }
 
     private BarraLateral getThis(){

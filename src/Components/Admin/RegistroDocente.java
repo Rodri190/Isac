@@ -1,9 +1,12 @@
 package Components.Admin;
 
 import UI.GradientBackground;
+import database.Query;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.time.LocalDate;
 
 import javax.swing.*;
 
@@ -15,6 +18,7 @@ class RegistroDocente extends JPanel {
     private static final int ALTURA = 900;
     private static final int ANCHO = 1040;
     private BarraLateral barraLateral;
+    private Query query;
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -22,7 +26,8 @@ class RegistroDocente extends JPanel {
         gradien.ponerFondoGradiente(g, getWidth(), getHeight(), Color.decode("#688e12"), Color.decode("#222a14"));
     }
 
-    public RegistroDocente(BarraLateral barraLateral) {
+    public RegistroDocente(BarraLateral barraLateral, Query query) {
+        this.query = query;
         this.barraLateral = barraLateral;
         gradien = new GradientBackground();
         setLocation(300, 0);
@@ -161,9 +166,14 @@ class RegistroDocente extends JPanel {
                 // }else if(chkTarde.isSelected()){
                 // turno = "Tarde";
                 // }
-                Persona persona = new Persona(nombre, apellidos, ci, celular, carrera, correo, "Docente", "Activo");
-                barraLateral.crearNuevaPersona(persona);
 
+                //esto era para guardar en el arrayList cuando no teniamos la base de datos todabia
+                // Persona persona = new Persona(nombre, apellidos, ci, celular, carrera, "Docente", "Activo");
+                // barraLateral.crearNuevaPersona(persona);
+
+                query.insertarPersona(nombre, apellidos, ci, celular, correo, "Docente", "", LocalDate.now());
+
+                //para limpiar los campos
                 txtNombre.setText("");
                 txtApellidos.setText("");
                 txtCi.setText("");

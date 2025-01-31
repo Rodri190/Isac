@@ -9,6 +9,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.LinearGradientPaint;
 import java.awt.geom.Point2D;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -32,6 +33,8 @@ import UI.GradientBackground;
 import UI.GradientPanel;
 import Utilities.ComponentStyler;
 import Utilities.Fuente;
+import database.Query;
+import database.modeloTablas.Persona;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -48,15 +51,18 @@ public class AdminPanel extends JPanel {
     private DefaultTableModel modelo;
     private JScrollPane scrollPane;
     private JTable tabla;
+    private Query query;
 
-    public AdminPanel(int alto) {
+    public AdminPanel(int alto, ArrayList<Persona> personas) {
         gradientPanel = new GradientPanel();
         gradient = new GradientBackground();
         styler = new ComponentStyler();
         fuente = new Fuente();
+        query = new Query();
         setBackground(Color.decode("#ffffff"));
         setBounds(300, 0, 1040, alto);
         setLayout(null);
+        initTabla(personas);
         initComponents();
     }
 
@@ -67,6 +73,7 @@ public class AdminPanel extends JPanel {
         int yComp = 30;
         int xImg = xComp + 10;
         int yImg = yComp + 10;
+        ArrayList<String> totales = getArrayDeTotales();
         String[] titulos = { "Total de estudiantes", "Total de docentes", "Total de cursos" };
         Color[] colores = { Color.decode("#8787f9"), Color.decode("#B370F3"), Color.decode("#EBCB3E") };
         String path = "src/Resources/img/";
@@ -81,7 +88,7 @@ public class AdminPanel extends JPanel {
                     xImg,
                     yImg,
                     titulos[i],
-                    "120",
+                    totales.get(i),
                     colores[i],
                     colores[i],
                     path + imagenes[i],
@@ -91,9 +98,16 @@ public class AdminPanel extends JPanel {
         }
     }
 
+    private ArrayList<String> getArrayDeTotales(){
+        ArrayList<String> totales = new ArrayList<>();
+        totales.add(query.selectTotalEstudiantes());
+        totales.add(query.selectTotalDocentes());
+        totales.add(query.selectTotalMaterias());
+        return totales;
+    }
+
     private void initComponents() {
         initTituloTabla();
-        initTabla();
     }
 
     private void initTituloTabla() {
@@ -143,26 +157,10 @@ public class AdminPanel extends JPanel {
 
 
     // para la tabla
-    private void initTabla() {
+    private void initTabla(ArrayList<Persona> personas) {
         String[] columnas = { "Nombre", "E-mail", "Tipo", "Se unio", "Estado" };
 
-        Object[][] datos = {
-                { "Juan", "juan314@gmail.com", "estudiante", "02/08/2024", "activo" },
-                { "Ana", "ana42@gmail.com", "estudiante", "02/08/2024", "activo" },
-                { "Carlos", "car654@gmail.com", "estudiante", "02/08/2024", "activo" },
-                { "Pedro", "pedro567@gmail.com", "docente", "03/08/2024", "inactivo" },
-                { "Luis", "luis321@gmail.com", "estudiante", "04/08/2024", "activo" },
-                { "Marta", "marta67@gmail.com", "docente", "05/08/2024", "activo" },
-                { "Julia", "julia89@gmail.com", "estudiante", "06/08/2024", "activo" },
-                { "Roberto", "roberto1101@gmail.com", "estudiante", "07/08/2024", "inactivo" },
-                { "Laura", "laura22@gmail.com", "docente", "08/08/2024", "activo" },
-                { "Felipe", "felipe90@gmail.com", "estudiante", "09/08/2024", "activo" },
-                { "David", "david123@gmail.com", "docente", "10/08/2024", "activo" },
-                { "Clara", "clara545@gmail.com", "estudiante", "11/08/2024", "activo" },
-                { "Eva", "eva70@gmail.com", "docente", "12/08/2024", "inactivo" },
-                { "Sofia", "sofia222@gmail.com", "estudiante", "13/08/2024", "activo" },
-                { "Andrés", "andres999@gmail.com", "docente", "14/08/2024", "activo" }
-        };
+        Object[][] datos = convertirDatos(personas);
 
         modelo = new DefaultTableModel(datos, columnas);
         tabla = new JTable(modelo);
@@ -185,13 +183,17 @@ public class AdminPanel extends JPanel {
         add(scrollPane);
     }
 
-    public void crearNuevaPerona(Persona persona){
-        LocalDate fechaActual = LocalDate.now();
-        
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        
-        String fechaFormateada = fechaActual.format(formatter);
-        modelo.addRow(new Object[]{persona.getNombre(), persona.getCorreo(), persona.getTipoPersona(),fechaFormateada , persona.getEstado()});
+    private Object[][] convertirDatos(ArrayList<Persona> personas) {
+        Object[][] datos = new Object[personas.size()][8];
+        for (int i = 0; i < personas.size(); i++) {
+            Persona persona = personas.get(i);
+            datos[i][0] = persona.getNombre();
+            datos[i][1] = persona.getEmail();
+            datos[i][2] = persona.getTipoPersona();
+            datos[i][3] = persona.getFechaRegistro();
+            datos[i][4] = persona.getEstado();
+        }
+        return datos;
     }
 
     private void estilizarTablaEncabezado() {
