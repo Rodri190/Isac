@@ -48,6 +48,8 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class RegistroMateria extends JPanel {
     private Query query;
@@ -303,23 +305,22 @@ public class RegistroMateria extends JPanel {
             public void keyPressed(KeyEvent e) {
 
                 // if(e.getKeyCode() == KeyEvent.VK_ENTER){
-                    modelo.setRowCount(0);
-    
-                    for (Persona docente : buscarPorArray()) {
-                        Object[] fila = {
-                                docente.getNombre(),
-                                docente.getApellido(),
-                                docente.getEmail(),
-                                docente.getCi(),
-                                docente.getCelular()
-                        };
-                        modelo.addRow(fila);
-                        
-                    }
-                    repaint();
-                    revalidate();
-                // }
+                modelo.setRowCount(0);
 
+                for (Persona docente : buscarPorArray()) {
+                    Object[] fila = {
+                            docente.getNombre(),
+                            docente.getApellido(),
+                            docente.getEmail(),
+                            docente.getCi(),
+                            docente.getCelular()
+                    };
+                    modelo.addRow(fila);
+
+                }
+                repaint();
+                revalidate();
+                // }
 
             }
 
@@ -355,11 +356,45 @@ public class RegistroMateria extends JPanel {
         return res;
     }
 
-    private void initRegistrarBoton(){
-        registrarBtn = new GradientButton("Registrar", 810, 730, 180, 60, Color.decode("#1BB1DE"), Color.decode("#020B44"), Color.decode("#ffffff") , "negrita", 20);
-        // registrarBtn = new BotonesUI("Registrar", Color.decode("#F47725"), Color.decode("#9D0956"), Color.decode("#5B026F"));
+    private void initRegistrarBoton() {
+        registrarBtn = new GradientButton("Registrar", 810, 730, 180, 50, Color.decode("#E31782"),
+                Color.decode("#6E088C"), Color.decode("#ffffff"), "negrita", 20);
+        // registrarBtn = new BotonesUI("Registrar", Color.decode("#F47725"),
+        // Color.decode("#9D0956"), Color.decode("#5B026F"));
         registrarBtn.setLocation(810, 730);
+        agregarEventoRegistrar();
         add(registrarBtn);
+    }
+
+    private void agregarEventoRegistrar() {
+        registrarBtn.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                query.insertIntoMateria(nombreField.getText().trim(), turnoBox.getSelectedItem().toString(),
+                        facultadBox.getSelectedItem().toString(), obtenerIdDocente());
+            }
+        });
+    }
+
+    private int obtenerIdDocente() {
+        int idDocente = -1;
+        int filaSeleccionada = tabla.getSelectedRow();
+
+        if (filaSeleccionada != -1) {
+            String nombre = String.valueOf(tabla.getValueAt(filaSeleccionada, 0));
+            String apellido = String.valueOf(tabla.getValueAt(filaSeleccionada, 1));
+            String ci = String.valueOf(tabla.getValueAt(filaSeleccionada, 3));
+            for (Persona docente : docentesEnTabla) {
+                if(docente.getNombre().equals(nombre) && docente.getApellido().equals(apellido)
+                && docente.getCi().equals(ci)){
+                    idDocente = docente.getId();
+                    break;
+                }
+            }
+        } else {
+            System.out.println("No hay ninguna fila seleccionada.");
+        }
+        return idDocente;
     }
 
     // para la tabla
