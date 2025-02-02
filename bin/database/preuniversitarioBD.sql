@@ -25,13 +25,10 @@ DROP TABLE IF EXISTS `docente`;
 CREATE TABLE `docente` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `id_persona` int(11) DEFAULT NULL,
-  `id_materia` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `id_persona` (`id_persona`),
-  KEY `id_materia` (`id_materia`),
-  CONSTRAINT `docente_ibfk_1` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`id`),
-  CONSTRAINT `docente_ibfk_2` FOREIGN KEY (`id_materia`) REFERENCES `materia` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  CONSTRAINT `docente_ibfk_1` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -40,7 +37,7 @@ CREATE TABLE `docente` (
 
 LOCK TABLES `docente` WRITE;
 /*!40000 ALTER TABLE `docente` DISABLE KEYS */;
-INSERT INTO `docente` VALUES (1,1,NULL),(2,3,NULL),(3,6,NULL);
+INSERT INTO `docente` VALUES (1,1),(2,3),(3,6),(4,10),(5,11),(6,12),(7,13);
 /*!40000 ALTER TABLE `docente` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -58,7 +55,7 @@ CREATE TABLE `estudiante` (
   PRIMARY KEY (`id`),
   KEY `id_persona` (`id_persona`),
   CONSTRAINT `estudiante_ibfk_1` FOREIGN KEY (`id_persona`) REFERENCES `persona` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -67,7 +64,7 @@ CREATE TABLE `estudiante` (
 
 LOCK TABLES `estudiante` WRITE;
 /*!40000 ALTER TABLE `estudiante` DISABLE KEYS */;
-INSERT INTO `estudiante` VALUES (1,2,'Ingenieria Financiera'),(2,4,'Contabilidad'),(3,5,'Ingenieria Industrial'),(4,7,'Ingenieria Financiera');
+INSERT INTO `estudiante` VALUES (1,2,'Ingenieria Financiera'),(2,4,'Contabilidad'),(3,5,'Ingenieria Industrial'),(4,7,'Ingenieria Financiera'),(5,8,'Ingenieria Informatica'),(6,9,'Ingenieria industrial');
 /*!40000 ALTER TABLE `estudiante` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -163,10 +160,13 @@ CREATE TABLE `materia` (
   `nombre` varchar(100) NOT NULL,
   `turno` varchar(10) DEFAULT NULL,
   `id_facultad` int(11) DEFAULT NULL,
+  `id_docente` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `id_facultad` (`id_facultad`),
+  KEY `fk_materia_docente` (`id_docente`),
+  CONSTRAINT `fk_materia_docente` FOREIGN KEY (`id_docente`) REFERENCES `docente` (`id`),
   CONSTRAINT `materia_ibfk_1` FOREIGN KEY (`id_facultad`) REFERENCES `facultad` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -175,7 +175,7 @@ CREATE TABLE `materia` (
 
 LOCK TABLES `materia` WRITE;
 /*!40000 ALTER TABLE `materia` DISABLE KEYS */;
-INSERT INTO `materia` VALUES (1,'Fisica','mañana',1),(2,'Trigonometria','mañana',1),(3,'Biologia','mañana',1),(4,'Quimica','mañana',1),(5,'Fisica','tarde',1),(6,'Geometria','tarde',1),(7,'Trigonometria','tarde',1),(8,'Biologia','tarde',1),(9,'Quimica','tarde',1),(10,'Matematica','tarde',2),(11,'Historia','tarde',2),(12,'Literatura','tarde',2),(13,'Matematica','mañana',2),(14,'Historia','mañana',2),(15,'Literatura','mañana',2);
+INSERT INTO `materia` VALUES (18,'Quimica','Tarde',1,3);
 /*!40000 ALTER TABLE `materia` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -197,7 +197,7 @@ CREATE TABLE `persona` (
   `estado` varchar(10) DEFAULT NULL,
   `fecha_registro` date DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -206,7 +206,7 @@ CREATE TABLE `persona` (
 
 LOCK TABLES `persona` WRITE;
 /*!40000 ALTER TABLE `persona` DISABLE KEYS */;
-INSERT INTO `persona` VALUES (1,'Ernesto','De la Cruz','123456','98756412','ernesto@gmail.com','Docente','Activo','2025-01-30'),(2,'Ruben','Claros Terceros','26531548','63598456','ruben13@gmail.com','Estudiante','Activo','2025-01-30'),(3,'Vladimir','Costas','26586913','63521548','vladirmir@doc.umss.edu','Docente','Activo','2025-01-30'),(4,'Franco','Alvarado Teran','23561547','63521548','tearn12@gmail.com','Estudiante','Activo','2025-01-30'),(5,'Josue','Acosta','26154875','63524185','acosta@gmail.com','Estudiante','Activo','2025-01-30'),(6,'Mariel','Espinoza','26531548','62514589','mariel342@gmail.com','Docente','Activo','2025-01-30'),(7,'Tomas','Bargovia','25145869','62514875','tom32@gmail.com','Estudiante','Activo','2025-01-30');
+INSERT INTO `persona` VALUES (1,'Ernesto','De la Cruz','123456','98756412','ernesto@gmail.com','Docente','Activo','2025-01-30'),(2,'Ruben','Claros Terceros','26531548','63598456','ruben13@gmail.com','Estudiante','Activo','2025-01-30'),(3,'Vladimir','Costas','26586913','63521548','vladirmir@doc.umss.edu','Docente','Activo','2025-01-30'),(4,'Franco','Alvarado Teran','23561547','63521548','tearn12@gmail.com','Estudiante','Activo','2025-01-30'),(5,'Josue','Acosta','26154875','63524185','acosta@gmail.com','Estudiante','Activo','2025-01-30'),(6,'Mariel','Espinoza','26531548','62514589','mariel342@gmail.com','Docente','Activo','2025-01-30'),(7,'Tomas','Bargovia','25145869','62514875','tom32@gmail.com','Estudiante','Activo','2025-01-30'),(8,'Fernando','Argana','25145936','62154859','fern23@gmail.com','Estudiante','Activo','2025-02-01'),(9,'Katherine','Vallejos Rojas','25145869','62514859','kate@gmail.com','Estudiante','Activo','2025-02-01'),(10,'Mariel','Espinoza Gutierrez','14487845','62518459','maresp@gmail.com','Docente','Activo','2025-02-01'),(11,'Ricardo','Tellez Carvajal','25154859','74851523','ric354@gmail.com','Docente','Activo','2025-02-02'),(12,'Jose Maida','Ortiz Zurita','62152345','74851259','josue234@gmail.com','Docente','Activo','2025-02-02'),(13,'Roberto Aldi','Ballesteros Rodriguez','48597845','74591256','roldi@gmail.com','Docente','Activo','2025-02-02');
 /*!40000 ALTER TABLE `persona` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -223,4 +223,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-01-30 22:33:20
+-- Dump completed on 2025-02-02 12:59:08
