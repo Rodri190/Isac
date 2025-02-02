@@ -231,15 +231,15 @@ public class Query {
         return totalDocentes;
     }
 
-    public ArrayList<Persona> selectDocenteConNombre(String nombre) {
+    public ArrayList<Persona> selectDocenteCon(String campo, String parametro) {
         ArrayList<Persona> docentes = new ArrayList<>();
-        String selectPersonasSQL = "SELECT * FROM persona where nombre = ?";
+        String selectPersonasSQL = "SELECT * FROM persona WHERE " + campo + " LIKE ? and tipo_persona = 'Docente'";
         Date fechaSQL;
         String fechaFormateada;
 
         try (Connection conn = connection.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(selectPersonasSQL)) {
-                pstmt.setString(1, nombre);
+                    pstmt.setString(1, "%" + parametro + "%");
             pstmt.execute();
             ResultSet res = pstmt.getResultSet();
 

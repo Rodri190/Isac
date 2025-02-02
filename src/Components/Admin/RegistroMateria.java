@@ -32,7 +32,10 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
+import UI.BotonesUI;
 import UI.GradientBackground;
+import UI.GradientButton;
+import Utilities.ComponentAligment;
 import Utilities.ComponentStyler;
 import Utilities.Fuente;
 import Utilities.Separador;
@@ -63,13 +66,21 @@ public class RegistroMateria extends JPanel {
     private JScrollPane scrollPane;
     private JTable tabla;
     private JTextField buscador;
+    private String buscarPor;
+    private JComboBox opcionesFiltro;
+    private ArrayList<Persona> docentesEnTabla;
+    private JLabel registrarBtn;
+    private ComponentAligment aligment;
 
     public RegistroMateria(int altura, Query query, ArrayList<Persona> docentes) {
         query = new Query();
         gradient = new GradientBackground();
         fuente = new Fuente();
         styler = new ComponentStyler();
+        aligment = new ComponentAligment();
         esp = new Separador();
+        buscarPor = "Nombre";
+        docentesEnTabla = new ArrayList<>();
         setLayout(null);
         // setBackground(Color.decode("#191c31"));
         setBounds(300, 0, 1040, altura);
@@ -124,6 +135,7 @@ public class RegistroMateria extends JPanel {
         initSelectFacultad();
         initTurnoBox();
         initBuscador();
+        initRegistrarBoton();
     }
 
     private void initTituloRegistroLabel() {
@@ -214,9 +226,9 @@ public class RegistroMateria extends JPanel {
     }
 
     private void initBuscador() {
-        buscador = new JTextField(){
+        buscador = new JTextField() {
             @Override
-            public void paintComponent(Graphics g){
+            public void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 Image imagen = new ImageIcon("src/Resources/img/lupa.png").getImage();
                 g.drawImage(imagen, 0, 0, 40, 40, buscador);
@@ -226,8 +238,31 @@ public class RegistroMateria extends JPanel {
         buscador.setLocation(30, esp.separar(nombreField, 20));
         buscador.setBorder(new EmptyBorder(0, 50, 0, 0));
         agregarFocusListener(buscador, "Buscar Docente");
+        agregarFiltroDeBusqueda();
         agregarEventoTeclaEnter();
         add(buscador);
+    }
+
+    private void agregarFiltroDeBusqueda() {
+        JLabel filtroLabel = new JLabel("Buscar por :");
+        styler.style(filtroLabel, 90, 40, null, "normal", 15, Color.decode("#762C8F"));
+        filtroLabel.setLocation(760, 0);
+        // filtroLabel.setBorder(new LineBorder(Color.red, 3));
+        buscador.add(filtroLabel);
+        agregarOpcionesFiltro(filtroLabel);
+
+    }
+
+    private void agregarOpcionesFiltro(JLabel filtroLabel) {
+        opcionesFiltro = new JComboBox<>();
+        opcionesFiltro.addItem("Nombre");
+        opcionesFiltro.addItem("Apellido");
+        opcionesFiltro.addItem("C.I.");
+        opcionesFiltro.addItem("Celular");
+        styler.style(opcionesFiltro, 100, 40, null, "normal", 15, Color.decode("#191c31"));
+        opcionesFiltro.setLocation(esp.separarHorizontal(filtroLabel, 0), 0);
+        opcionesFiltro.setBorder(null);
+        buscador.add(opcionesFiltro);
     }
 
     private void agregarFocusListener(JTextField componente, String placeholder) {
@@ -257,36 +292,74 @@ public class RegistroMateria extends JPanel {
         // componente.setFocusable(false);
     }
 
-    private void agregarEventoTeclaEnter(){
+    private void agregarEventoTeclaEnter() {
         buscador.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
-                // No es necesario implementar esto
+
             }
 
             @Override
             public void keyPressed(KeyEvent e) {
-                
-                modelo.setRowCount(0);
-                for (Persona docente : query.selectDocenteConNombre(buscador.getText().trim())) {
-                    Object[] fila = {
-                        docente.getNombre(),
-                        docente.getApellido(),
-                        docente.getEmail(),
-                        docente.getCi(),
-                        docente.getCelular()
-                    };
-                    modelo.addRow(fila);
-        
-                }
-            
+
+                // if(e.getKeyCode() == KeyEvent.VK_ENTER){
+                    modelo.setRowCount(0);
+    
+                    for (Persona docente : buscarPorArray()) {
+                        Object[] fila = {
+                                docente.getNombre(),
+                                docente.getApellido(),
+                                docente.getEmail(),
+                                docente.getCi(),
+                                docente.getCelular()
+                        };
+                        modelo.addRow(fila);
+                        
+                    }
+                    repaint();
+                    revalidate();
+                // }
+
+
             }
 
             @Override
             public void keyReleased(KeyEvent e) {
-                // No es necesario implementar esto
+
             }
         });
+    }
+
+    private ArrayList<Persona> buscarPorArray() {
+        ArrayList<Persona> res = new ArrayList<>();
+        String parametro = buscador.getText().trim();
+        buscarPor = opcionesFiltro.getSelectedItem().toString();
+        switch (buscarPor) {
+            case "Nombre":
+                res = query.selectDocenteCon("nombre", parametro);
+                break;
+            case "Apellido":
+                res = query.selectDocenteCon("apellido", parametro);
+                break;
+            case "C.I.":
+                res = query.selectDocenteCon("ci", parametro);
+                break;
+            case "Celular":
+                res = query.selectDocenteCon("celular", parametro);
+                break;
+            default:
+                System.out.println("Algo salio mal");
+                break;
+        }
+        docentesEnTabla = res;
+        return res;
+    }
+
+    private void initRegistrarBoton(){
+        registrarBtn = new GradientButton("Registrar", 810, 730, 180, 60, Color.decode("#1BB1DE"), Color.decode("#020B44"), Color.decode("#ffffff") , "negrita", 20);
+        // registrarBtn = new BotonesUI("Registrar", Color.decode("#F47725"), Color.decode("#9D0956"), Color.decode("#5B026F"));
+        registrarBtn.setLocation(810, 730);
+        add(registrarBtn);
     }
 
     // para la tabla
@@ -322,10 +395,10 @@ public class RegistroMateria extends JPanel {
         for (int i = 0; i < personas.size(); i++) {
             Persona persona = personas.get(i);
             datos[i][0] = persona.getNombre();
-            datos[i][1] = persona.getEmail();
-            datos[i][2] = persona.getTipoPersona();
-            datos[i][3] = persona.getFechaRegistro();
-            datos[i][4] = persona.getEstado();
+            datos[i][1] = persona.getApellido();
+            datos[i][2] = persona.getEmail();
+            datos[i][3] = persona.getCi();
+            datos[i][4] = persona.getCelular();
         }
         return datos;
     }

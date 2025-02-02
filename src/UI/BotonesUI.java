@@ -3,6 +3,8 @@ package UI;
 
 import javax.swing.JButton;
 
+import Utilities.Fuente;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -20,15 +22,17 @@ public class BotonesUI extends JButton {
     private Color colorPressed;
     private FontMetrics metrics;
     private String text;
+    private Fuente fuente;
 
     public BotonesUI(String text, Color borderColor, Color bgColor, Color colorPressed) {
         this.text = text;
+        fuente = new Fuente();
         setContentAreaFilled(false);
         setBorderPainted(false);
         setText("Jugar");
         setFont(new Font("Cooper Black", Font.BOLD, 15));
         setForeground(Color.decode("#00ffff"));
-        setBounds(100, 100, 180, 60);
+        setBounds(100, 100, 180, 50);
         this.borderColor = borderColor;
         this.bgColor = bgColor;
         this.colorPressed = colorPressed;
@@ -41,7 +45,7 @@ public class BotonesUI extends JButton {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
         // para la fuente
-        g2.setFont(new Font("hooge 05_53", Font.BOLD, 20));
+        g2.setFont(fuente.getFuente("normal", 20));
         metrics = g2.getFontMetrics();
 
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -52,11 +56,11 @@ public class BotonesUI extends JButton {
         
         // para el borde
         g2.setColor(bgColor);
-        g2.fillRoundRect(6, 6, getWidth() - 12, getHeight() - 12, 50, 50);
+        g2.fillRoundRect(4, 4, getWidth() - 8, getHeight() - 8, 50, 50);
 
         // para dibujar el texto
-        g2.setColor(borderColor);
-        g2.drawString(text, (getWidth() - metrics.stringWidth(text)) / 2, 40);
+        g2.setColor(Color.decode("#ffffff"));
+        g2.drawString(text, (getWidth() - metrics.stringWidth(text)) / 2, 33);
 
         addMouseListener(new MouseAdapter() {
             @Override
