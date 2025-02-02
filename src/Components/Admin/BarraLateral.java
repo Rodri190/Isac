@@ -102,10 +102,10 @@ public class BarraLateral extends JPanel {
     }
 
     private void initBotones() {
-        String[] texto = { "Vista General", "Agregar Docente", "Agregar Estudiante"};
-        String[] imgPath = { "vistaGeneral.png", "registrarDocente.png", "registrarEstudiante.png"};
+        String[] texto = { "Vista General", "Agregar Docente", "Agregar Estudiante", "Agregar Materia" };
+        String[] imgPath = { "vistaGeneral.png", "registrarDocente.png", "registrarEstudiante.png", "registrarMateria.png" };
         BotonOpcion botonOpcion;
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 4; i++) {
             botonOpcion = new BotonOpcion(texto[i],
                     path + imgPath[i],
                     getWidth() - 40,
@@ -189,7 +189,7 @@ public class BarraLateral extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 adminFrame.remove(panelActual);
-                panelActual = (RegistroDocente)new RegistroDocente(getThis(), query);
+                panelActual = (RegistroDocente)new RegistroDocente(query);
                 adminFrame.add(panelActual);
                 adminFrame.repaint();
                 adminFrame.revalidate();
@@ -201,7 +201,19 @@ public class BarraLateral extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 adminFrame.remove(panelActual);
-                panelActual = (RegistroEstudiante)new RegistroEstudiante(getThis(), query);
+                panelActual = (RegistroEstudiante)new RegistroEstudiante(query);
+                adminFrame.add(panelActual);
+                adminFrame.repaint();
+                adminFrame.revalidate();
+                System.out.println("se cambio a estudiante");
+            }
+        });
+
+        botonesOpciones.get(3).addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                adminFrame.remove(panelActual);
+                panelActual = (RegistroMateria)new RegistroMateria(getHeight(),query, query.selectTodosLosDocentes());
                 adminFrame.add(panelActual);
                 adminFrame.repaint();
                 adminFrame.revalidate();

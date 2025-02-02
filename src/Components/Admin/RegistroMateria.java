@@ -9,79 +9,91 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.LinearGradientPaint;
 import java.awt.geom.Point2D;
-import java.lang.reflect.Array;
+import java.awt.Image;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.plaf.basic.BasicScrollBarUI;
-import javax.swing.plaf.metal.MetalScrollBarUI;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
-import UI.BotonesUI;
 import UI.GradientBackground;
-import UI.GradientPanel;
 import Utilities.ComponentStyler;
 import Utilities.Fuente;
+import Utilities.Separador;
 import database.Query;
+import database.model.Facultad;
+import database.model.Materia;
 import database.model.Persona;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
-public class AdminPanel extends JPanel {
+public class RegistroMateria extends JPanel {
+    private Query query;
     private GradientBackground gradient;
-    private JLabel totalEstudiantesPanel;
-    private JLabel totalDocentesPanel;
-    private BotonesUI boton;
-    private GradientPanel gradientPanel;
-    private JLabel tituloTabla;
-    private ComponentStyler styler;
     private Fuente fuente;
+    private ComponentStyler styler;
+    private Separador esp;
+    private JLabel tituloRegistroLabel;
+    private JLabel nombreLabel;
+    private JLabel turnoLabel;
+    private JLabel facultadLabel;
+    private JTextField nombreField;
+    private JComboBox turnoBox;
+    private JComboBox facultadBox;
     private DefaultTableModel modelo;
     private JScrollPane scrollPane;
     private JTable tabla;
-    private Query query;
+    private JTextField buscador;
 
-    public AdminPanel(int alto, ArrayList<Persona> personas) {
-        gradientPanel = new GradientPanel();
-        gradient = new GradientBackground();
-        styler = new ComponentStyler();
-        fuente = new Fuente();
+    public RegistroMateria(int altura, Query query, ArrayList<Persona> docentes) {
         query = new Query();
-        setBackground(Color.decode("#ffffff"));
-        setBounds(300, 0, 1040, alto);
+        gradient = new GradientBackground();
+        fuente = new Fuente();
+        styler = new ComponentStyler();
+        esp = new Separador();
         setLayout(null);
-        initTabla(personas);
+        // setBackground(Color.decode("#191c31"));
+        setBounds(300, 0, 1040, altura);
+        this.query = query;
         initComponents();
+        initTabla(docentes);
     }
 
     @Override
-    public void paintComponent(Graphics g) {
+    protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         int xComp = 30;
         int yComp = 30;
         int xImg = xComp + 10;
         int yImg = yComp + 10;
         ArrayList<String> totales = getArrayDeTotales();
-        String[] titulos = { "Total de estudiantes", "Total de docentes", "Total de cursos" };
-        Color[] colores = { Color.decode("#8787f9"), Color.decode("#B370F3"), Color.decode("#EBCB3E") };
+        String[] titulos = { "Total de Docentes", "Total de Facultades" };
+        Color[] colores = { Color.decode("#F47725"), Color.decode("#C70D46") };
         String path = "src/Resources/img/";
-        String[] imagenes = { "registrarEstudiante.png", "registrarDocente.png", "registrarMateria.png" };
-        for (int i = 0; i < 3; i++) {
+        String[] imagenes = { "registrarDocente.png", "registrarMateria.png" };// cambiar el icono
+        for (int i = 0; i < 2; i++) {
             gradient.ponerFondoGradienteRedondeado(
                     g,
-                    300,
+                    350,
                     200,
                     xComp,
                     yComp,
@@ -93,25 +105,29 @@ public class AdminPanel extends JPanel {
                     colores[i],
                     path + imagenes[i],
                     this);
-            xComp += 330;
-            xImg += 330;
+            xComp += 380;
+            xImg += 380;
         }
     }
 
-    private ArrayList<String> getArrayDeTotales(){
+    private ArrayList<String> getArrayDeTotales() {
         ArrayList<String> totales = new ArrayList<>();
-        totales.add(query.selectTotalEstudiantes());
         totales.add(query.selectTotalDocentes());
         totales.add(query.selectTotalMaterias());
         return totales;
     }
 
     private void initComponents() {
-        initTituloTabla();
+        initTituloRegistroLabel();
+        initLabels();
+        initNombreField();
+        initSelectFacultad();
+        initTurnoBox();
+        initBuscador();
     }
 
-    private void initTituloTabla() {
-        tituloTabla = new JLabel() {
+    private void initTituloRegistroLabel() {
+        tituloRegistroLabel = new JLabel() {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -120,7 +136,7 @@ public class AdminPanel extends JPanel {
                 Graphics2D g2d = (Graphics2D) g;
 
                 // Definir el texto y la fuente
-                String texto = "Personas de la intitucion";
+                String texto = "Registro de Materia";
                 Font font = fuente.getFuente("negrita", 25);
                 g2d.setFont(font);
 
@@ -149,16 +165,133 @@ public class AdminPanel extends JPanel {
             }
 
         };
-        styler.style(tituloTabla, 300, 50, null, "negrita", 25, Color.decode("#710466"));
-        tituloTabla.setLocation(30, 260);
+        styler.style(tituloRegistroLabel, 300, 40, null, "negrita", 25, Color.decode("#710466"));
+        tituloRegistroLabel.setLocation(30, 260);
 
-        add(tituloTabla);
+        add(tituloRegistroLabel);
     }
 
+    private void initLabels() {
+        JLabel[] labels = { nombreLabel = new JLabel("Nombre"), facultadLabel = new JLabel("Facutltad"),
+                turnoLabel = new JLabel("Turno") };
+        int x = 30;
+        for (JLabel jLabel : labels) {
+            styler.style(jLabel, 300, 50, null, "negrita", 23, Color.decode("#830660"));
+            jLabel.setLocation(x, esp.separar(tituloRegistroLabel, 20));
+            add(jLabel);
+            x = jLabel.getX() + jLabel.getWidth() + 30;
+        }
+    }
+
+    private void initNombreField() {
+        nombreField = new JTextField();
+        styler.style(nombreField, 300, 40, Color.decode("#F47129"), "normal", 20, Color.white);
+        nombreField.setLocation(30, esp.separar(nombreLabel, 0));
+        nombreField.setBorder(new LineBorder(Color.decode("#9A0957"), 3));
+        nombreField.setCaretColor(Color.white);
+        nombreField.setBorder(new EmptyBorder(0, 10, 0, 0));
+        add(nombreField);
+    }
+
+    private void initSelectFacultad() {
+        facultadBox = new JComboBox<>();
+        styler.style(facultadBox, 300, 40, Color.decode("#F47129"), "negrita", 20, Color.white);
+        for (Facultad facultad : query.selectTodasLasFacultades()) {
+            facultadBox.addItem(facultad.getNombre());
+        }
+        facultadBox.setBounds(esp.separarHorizontal(nombreField, 30), esp.separar(facultadLabel, 0), 300, 40);
+
+        add(facultadBox);
+    }
+
+    private void initTurnoBox() {
+        turnoBox = new JComboBox<>();
+        styler.style(turnoBox, 300, 40, Color.decode("#F47129"), "negrita", 20, Color.white);
+        turnoBox.addItem("Mañana");
+        turnoBox.addItem("Tarde");
+        turnoBox.setBounds(esp.separarHorizontal(facultadBox, 30), esp.separar(turnoLabel, 0), 300, 40);
+        add(turnoBox);
+    }
+
+    private void initBuscador() {
+        buscador = new JTextField(){
+            @Override
+            public void paintComponent(Graphics g){
+                super.paintComponent(g);
+                Image imagen = new ImageIcon("src/Resources/img/lupa.png").getImage();
+                g.drawImage(imagen, 0, 0, 40, 40, buscador);
+            }
+        };
+        styler.style(buscador, 960, 40, Color.decode("#ffffff"), "normal", 20, Color.decode("#000000"));
+        buscador.setLocation(30, esp.separar(nombreField, 20));
+        buscador.setBorder(new EmptyBorder(0, 50, 0, 0));
+        agregarFocusListener(buscador, "Buscar Docente");
+        agregarEventoTeclaEnter();
+        add(buscador);
+    }
+
+    private void agregarFocusListener(JTextField componente, String placeholder) {
+        componente.addFocusListener(
+                new FocusListener() {
+                    @Override
+                    public void focusGained(FocusEvent e) {
+                        if (componente.getText().equals(placeholder)) {
+                            componente.setText("");
+                            componente.setForeground(Color.BLACK);
+                        }
+                    }
+
+                    @Override
+                    public void focusLost(FocusEvent e) {
+                        if (componente.getText().isEmpty()) {
+                            componente.setText(placeholder);
+                            componente.setForeground(Color.GRAY);
+                        }
+                    }
+                });
+
+        if (componente.getText().isEmpty()) {
+            componente.setText(placeholder);
+            componente.setForeground(Color.GRAY);
+        }
+        // componente.setFocusable(false);
+    }
+
+    private void agregarEventoTeclaEnter(){
+        buscador.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                // No es necesario implementar esto
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                
+                modelo.setRowCount(0);
+                for (Persona docente : query.selectDocenteConNombre(buscador.getText().trim())) {
+                    Object[] fila = {
+                        docente.getNombre(),
+                        docente.getApellido(),
+                        docente.getEmail(),
+                        docente.getCi(),
+                        docente.getCelular()
+                    };
+                    modelo.addRow(fila);
+        
+                }
+            
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                // No es necesario implementar esto
+            }
+        });
+    }
 
     // para la tabla
     private void initTabla(ArrayList<Persona> personas) {
-        String[] columnas = { "Nombre", "E-mail", "Tipo", "Se unio", "Estado" };
+        String[] columnas = { "Nombre/s", "Apellido/s", "E-mail", "C.I.", "Celular" };
 
         Object[][] datos = convertirDatos(personas);
 
@@ -166,16 +299,17 @@ public class AdminPanel extends JPanel {
         tabla = new JTable(modelo);
 
         // para el ancho de las columnas
-        tabla.getColumnModel().getColumn(1).setPreferredWidth(100);
-        tabla.getColumnModel().getColumn(2).setPreferredWidth(30);
+        tabla.getColumnModel().getColumn(0).setPreferredWidth(80);
+        tabla.getColumnModel().getColumn(1).setPreferredWidth(80);
+        // tabla.getColumnModel().getColumn(2).setPreferredWidth(100);
         tabla.getColumnModel().getColumn(3).setPreferredWidth(30);
-        tabla.getColumnModel().getColumn(4).setPreferredWidth(50);
+        tabla.getColumnModel().getColumn(4).setPreferredWidth(30);
 
         // para el encabezado
         estilizarTablaEncabezado();
         tabla.setRowHeight(50);
         scrollPane = new JScrollPane(tabla);
-        scrollPane.setBounds(30, 30 + 175 + 30 + 50 + 30 + 30, 960, 450);
+        scrollPane.setBounds(30, esp.separar(buscador, 20), 960, 200);
 
         // para el scroll
         estilizarScrollBar();

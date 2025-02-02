@@ -22,4 +22,6 @@ public class GradientPanel {
         int textY = (int)((alto + textHeight) / 2);
         g.drawString(texto, textX, textY);
     }
+
+    
 }

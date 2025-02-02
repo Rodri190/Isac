@@ -1,4 +1,4 @@
-package database.modeloTablas;
+package database.model;
 
 public class Persona {
     private int id;

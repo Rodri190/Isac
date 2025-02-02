@@ -10,7 +10,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-import database.modeloTablas.Persona;
+import database.model.Persona;
+import database.model.Facultad;
+import database.model.Materia;
 
 public class Query {
     private Conection connection;
@@ -19,7 +21,8 @@ public class Query {
         connection = new Conection();
     }
 
-    public void insertarPersona(String nombre, String apellido, String ci, String celular, String email, String tipoPersona, String carrera, LocalDate fechaActual) {
+    public void insertarPersona(String nombre, String apellido, String ci, String celular, String email,
+            String tipoPersona, String carrera, LocalDate fechaActual) {
         java.sql.Date fechaSql = java.sql.Date.valueOf(fechaActual);
         String insertarPersonaSQL = "insert into persona(nombre, apellido, ci, celular, email, tipo_persona, estado, fecha_registro) values(?,?,?,?,?,?,'Activo',?)";
         String insertarDatosExtra = "";
@@ -95,7 +98,83 @@ public class Query {
         return personas;
     }
 
-    public String selectTotalMaterias(){
+    public ArrayList<Persona> selectTodosLosDocentes() {
+        ArrayList<Persona> docentes = new ArrayList<>();
+        String selectPersonasSQL = "SELECT * FROM persona where tipo_persona = 'Docente'";
+        Date fechaSQL;
+        String fechaFormateada;
+
+        try (Connection conn = connection.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(selectPersonasSQL)) {
+
+            pstmt.execute();
+            ResultSet res = pstmt.getResultSet();
+
+            while (res.next()) {
+                fechaSQL = res.getDate("fecha_registro");
+                // Convertir a java.util.Date
+                java.util.Date fechaUtil = new java.util.Date(fechaSQL.getTime());
+
+                // Formatear a "dd-MM-yy"
+                SimpleDateFormat formato = new SimpleDateFormat("dd-MM-yy");
+                fechaFormateada = formato.format(fechaUtil);
+                docentes.add(new Persona(res.getInt("id"), res.getString("nombre"), res.getString("apellido"),
+                        res.getString("ci"), res.getString("celular"), res.getString("email"),
+                        res.getString("tipo_persona"),
+                        res.getString("estado"), fechaFormateada));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return docentes;
+    }
+
+    public ArrayList<Materia> selectTodasLasMaterias() {
+        ArrayList<Materia> materias = new ArrayList<>();
+        String selectPersonasSQL = "SELECT * FROM materia";
+
+        try (Connection conn = connection.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(selectPersonasSQL)) {
+
+            pstmt.execute();
+            ResultSet res = pstmt.getResultSet();
+
+            while (res.next()) {
+
+                materias.add(new Materia(res.getInt("id"),
+                        res.getString("nombre"),
+                        res.getString("turno"),
+                        res.getString("id_facultad"),
+                        res.getString("id_docente"))
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return materias;
+    }
+
+    public ArrayList<Facultad> selectTodasLasFacultades() {
+        ArrayList<Facultad> facultades = new ArrayList<>();
+        String selectPersonasSQL = "SELECT * FROM facultad";
+
+        try (Connection conn = connection.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(selectPersonasSQL)) {
+
+            pstmt.execute();
+            ResultSet res = pstmt.getResultSet();
+
+            while (res.next()) {
+
+                facultades.add(new Facultad(res.getInt("id"), res.getString("nombre")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return facultades;
+    }
+
+    public String selectTotalMaterias() {
         String totalMaterias = "";
         String selectTotalMateriasSQL = "SELECT COUNT(*) FROM materia";
 
@@ -114,7 +193,7 @@ public class Query {
         return totalMaterias;
     }
 
-    public String selectTotalEstudiantes(){
+    public String selectTotalEstudiantes() {
         String totalEstudiantes = "";
         String selectTotalMateriasSQL = "SELECT COUNT(*) FROM estudiante";
 
@@ -133,7 +212,7 @@ public class Query {
         return totalEstudiantes;
     }
 
-    public String selectTotalDocentes(){
+    public String selectTotalDocentes() {
         String totalDocentes = "";
         String selectTotalMateriasSQL = "SELECT COUNT(*) FROM docente";
 
@@ -150,6 +229,37 @@ public class Query {
             e.printStackTrace();
         }
         return totalDocentes;
+    }
+
+    public ArrayList<Persona> selectDocenteConNombre(String nombre) {
+        ArrayList<Persona> docentes = new ArrayList<>();
+        String selectPersonasSQL = "SELECT * FROM persona where nombre = ?";
+        Date fechaSQL;
+        String fechaFormateada;
+
+        try (Connection conn = connection.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(selectPersonasSQL)) {
+                pstmt.setString(1, nombre);
+            pstmt.execute();
+            ResultSet res = pstmt.getResultSet();
+
+            while (res.next()) {
+                fechaSQL = res.getDate("fecha_registro");
+                // Convertir a java.util.Date
+                java.util.Date fechaUtil = new java.util.Date(fechaSQL.getTime());
+
+                // Formatear a "dd-MM-yy"
+                SimpleDateFormat formato = new SimpleDateFormat("dd-MM-yy");
+                fechaFormateada = formato.format(fechaUtil);
+                docentes.add(new Persona(res.getInt("id"), res.getString("nombre"), res.getString("apellido"),
+                        res.getString("ci"), res.getString("celular"), res.getString("email"),
+                        res.getString("tipo_persona"),
+                        res.getString("estado"), fechaFormateada));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return docentes;
     }
 
 }

@@ -11,4 +11,8 @@ public class Separador {
     public int separar(Component anterior, int espaciado){
         return anterior.getY() + anterior.getHeight() + espaciado;
     }
+
+    public int separarHorizontal(Component anterior, int espaciado){
+        return anterior.getX() + anterior.getWidth() + espaciado;
+    }
 }
