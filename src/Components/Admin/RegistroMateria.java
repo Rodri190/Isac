@@ -11,7 +11,6 @@ import java.awt.LinearGradientPaint;
 import java.awt.geom.Point2D;
 import java.awt.Image;
 import java.util.ArrayList;
-import java.util.Timer;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
@@ -35,6 +34,7 @@ import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import javax.swing.Timer;
 
 import UI.BotonesUI;
 import UI.GradientBackground;
@@ -68,17 +68,19 @@ public class RegistroMateria extends JPanel {
     private JLabel turnoLabel;
     private JLabel facultadLabel;
     private JTextField nombreField;
-    private JComboBox turnoBox;
-    private JComboBox facultadBox;
+    private JComboBox<String> turnoBox;
+    private JComboBox<String> facultadBox;
     private DefaultTableModel modelo;
     private JScrollPane scrollPane;
     private JTable tabla;
     private JTextField buscador;
     private String buscarPor;
-    private JComboBox opcionesFiltro;
+    private JComboBox<String> opcionesFiltro;
     private ArrayList<Persona> docentesEnTabla;
     private JLabel registrarBtn;
     private ComponentAligment aligment;
+    private JLabel mesajeError;
+    private JLabel mensajeExistoso;
     private JLabel mensajeAlerta;
 
     public RegistroMateria(int altura, Query query, ArrayList<Persona> docentes) {
@@ -95,6 +97,7 @@ public class RegistroMateria extends JPanel {
         setBounds(300, 0, 1040, altura);
         this.query = query;
         initComponents();
+        docentesEnTabla = docentes;
         initTabla(docentes);
     }
 
@@ -106,14 +109,14 @@ public class RegistroMateria extends JPanel {
         int xImg = xComp + 10;
         int yImg = yComp + 10;
         ArrayList<String> totales = getArrayDeTotales();
-        String[] titulos = { "Total de Docentes", "Total de Facultades" };
-        Color[] colores = { Color.decode("#F47725"), Color.decode("#C70D46") };
+        String[] titulos = { "Total de Docentes", "Total de Facultades", "Total de Materias" };
+        Color[] colores = { Color.decode("#F47725"), Color.decode("#C040D3") , Color.decode("#77D2DC")};
         String path = "src/Resources/img/";
-        String[] imagenes = { "registrarDocente.png", "registrarMateria.png" };// cambiar el icono
-        for (int i = 0; i < 2; i++) {
+        String[] imagenes = { "registrarDocente.png", "facultad.png" , "registrarMateria.png"};// cambiar el icono
+        for (int i = 0; i < 3; i++) {
             gradient.ponerFondoGradienteRedondeado(
                     g,
-                    350,
+                    300,
                     200,
                     xComp,
                     yComp,
@@ -125,14 +128,15 @@ public class RegistroMateria extends JPanel {
                     colores[i],
                     path + imagenes[i],
                     this);
-            xComp += 380;
-            xImg += 380;
+            xComp += 330;
+            xImg += 330;
         }
     }
 
     private ArrayList<String> getArrayDeTotales() {
         ArrayList<String> totales = new ArrayList<>();
         totales.add(query.selectTotalDocentes());
+        totales.add(query.selectTotalFacultades());
         totales.add(query.selectTotalMaterias());
         return totales;
     }
@@ -145,6 +149,9 @@ public class RegistroMateria extends JPanel {
         initTurnoBox();
         initBuscador();
         initRegistrarBoton();
+        initMensajeError();
+        initMensajeExitoso();
+        initMesajeAlerta();
     }
 
     private void initTituloRegistroLabel() {
@@ -236,7 +243,7 @@ public class RegistroMateria extends JPanel {
         add(turnoBox);
     }
 
-    private void personalizarComboBox(JComboBox combo) {
+    private void personalizarComboBox(JComboBox<String> combo) {
         combo.setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index,
@@ -355,20 +362,13 @@ public class RegistroMateria extends JPanel {
                     modelo.addRow(fila);
 
                 }
-                // if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                //     mensajeAlerta.setText("No se encontro ningun docente");
-                //     Timer timer = new Timer(5000, new ActionListener() {
-                //         @Override
-                //         public void actionPerformed(ActionEvent e) {
-                //             // Borrar el texto del JLabel
-                //             label.setText("");
-                //         }
-                //     });
-            
-                //     // Iniciar el Timer (solo se ejecuta una vez)
-                //     timer.setRepeats(false); // Asegurarse de que el Timer no se repita
-                //     timer.start();
-                // }
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    if (docentesEnTabla.size() == 0) {
+                        add(mesajeError);
+                        repaint();
+                        initCountdown();
+                    }
+                }
                 repaint();
                 revalidate();
 
@@ -379,6 +379,21 @@ public class RegistroMateria extends JPanel {
 
             }
         });
+    }
+
+    private void initCountdown() {
+        Timer timer = new Timer(3000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                remove(mesajeError);
+                remove(mensajeExistoso);
+                remove(mensajeAlerta);
+                repaint();
+                revalidate();
+            }
+        });
+        timer.setRepeats(false);
+        timer.start();
     }
 
     private ArrayList<Persona> buscarPorArray() {
@@ -420,8 +435,17 @@ public class RegistroMateria extends JPanel {
         registrarBtn.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                query.insertIntoMateria(nombreField.getText().trim(), turnoBox.getSelectedItem().toString(),
-                        facultadBox.getSelectedItem().toString(), obtenerIdDocente());
+                if (nombreField.getText().equals("") || tabla.getSelectedRow() == -1) {
+                    add(mensajeAlerta);
+                    repaint();
+                    initCountdown();
+                } else {
+                    query.insertIntoMateria(nombreField.getText().trim(), turnoBox.getSelectedItem().toString(),
+                            facultadBox.getSelectedItem().toString(), obtenerIdDocente());
+                    add(mensajeExistoso);
+                    repaint();
+                    initCountdown();
+                }
             }
         });
     }
@@ -445,6 +469,57 @@ public class RegistroMateria extends JPanel {
             System.out.println("No hay ninguna fila seleccionada.");
         }
         return idDocente;
+    }
+
+    private void initMensajeError() {
+        mesajeError = new JLabel("No se encontró a ningún docente") {
+            @Override
+            public void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Image imagen = new ImageIcon("src/Resources/img/xMark.png").getImage();
+                g.drawImage(imagen, 310, 5, 70, 40, mensajeExistoso);
+            }
+        };
+        styler.style(mesajeError, 380, 50, null, "negrita", 20, Color.decode("#ffffff"));
+        mesajeError.setLocation(30, registrarBtn.getY());
+        mesajeError.setOpaque(true);
+        mesajeError.setBackground(Color.decode("#FF1717"));
+        mesajeError.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        // add(mensajeAlerta);
+    }
+
+    private void initMensajeExitoso() {
+        mensajeExistoso = new JLabel("Materia registrada existosamente") {
+            @Override
+            public void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Image imagen = new ImageIcon("src/Resources/img/checkIcon.png").getImage();
+                g.drawImage(imagen, 370, 5, 40, 40, mensajeExistoso);
+            }
+        };
+        styler.style(mensajeExistoso, 420, 50, null, "negrita", 23, Color.decode("#ffffff"));
+        mensajeExistoso.setLocation(30, registrarBtn.getY());
+        mensajeExistoso.setOpaque(true);
+        mensajeExistoso.setBackground(Color.decode("#00BA00"));
+        mensajeExistoso.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        // add(mensajeExistoso);
+    }
+
+    private void initMesajeAlerta() {
+        mensajeAlerta = new JLabel("Datos incompletos, verifique") {
+            @Override
+            public void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Image imagen = new ImageIcon("src/Resources/img/alert.png").getImage();
+                g.drawImage(imagen, 320, 5, 40, 40, mensajeAlerta);
+            }
+        };
+        styler.style(mensajeAlerta, 370, 50, null, "negrita", 23, Color.decode("#ffffff"));
+        mensajeAlerta.setLocation(30, registrarBtn.getY());
+        mensajeAlerta.setOpaque(true);
+        mensajeAlerta.setBackground(Color.decode("#FF6C09"));
+        mensajeAlerta.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        // add(mensajeAlerta);
     }
 
     // para la tabla
@@ -503,18 +578,14 @@ public class RegistroMateria extends JPanel {
                 JLabel celda = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row,
                         column);
 
-                // Quitar todos los bordes de la celda
                 celda.setBorder(BorderFactory.createEmptyBorder());
 
-                // Solo dejar el borde inferior
                 if (row == table.getRowCount() - 1) {
                     celda.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.GRAY));
                 }
 
-                // Alinear al centro
                 celda.setHorizontalAlignment(SwingConstants.CENTER);
 
-                // Cambiar la fuente
                 celda.setFont(fuente.getFuente("normal", 17));
 
                 return celda;
@@ -533,21 +604,21 @@ public class RegistroMateria extends JPanel {
             @Override
             protected JButton createDecreaseButton(int orientation) {
                 JButton button = super.createDecreaseButton(orientation);
-                button.setBackground(Color.DARK_GRAY); // Cambiar el color del botón de desplazamiento
+                button.setBackground(Color.DARK_GRAY);
                 return button;
             }
 
             @Override
             protected JButton createIncreaseButton(int orientation) {
                 JButton button = super.createIncreaseButton(orientation);
-                button.setBackground(Color.DARK_GRAY); // Cambiar el color del botón de desplazamiento
+                button.setBackground(Color.DARK_GRAY);
                 return button;
             }
 
             @Override
             protected void configureScrollBarColors() {
-                this.thumbColor = Color.decode("#E2103C"); // Color de la barra deslizante
-                this.trackColor = Color.decode("#8F075B"); // Color de la pista
+                this.thumbColor = Color.decode("#E2103C");
+                this.trackColor = Color.decode("#8F075B");
             }
         });
     }

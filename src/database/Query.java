@@ -230,6 +230,25 @@ public class Query {
         return totalDocentes;
     }
 
+    public String selectTotalFacultades() {
+        String totalDocentes = "";
+        String selectTotalMateriasSQL = "SELECT COUNT(*) FROM facultad";
+
+        try (Connection conn = connection.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(selectTotalMateriasSQL)) {
+
+            pstmt.execute();
+            ResultSet res = pstmt.getResultSet();
+
+            while (res.next()) {
+                totalDocentes = res.getString("COUNT(*)");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return totalDocentes;
+    }
+
     public ArrayList<Persona> selectDocenteCon(String campo, String parametro) {
         ArrayList<Persona> docentes = new ArrayList<>();
         String selectPersonasSQL = "SELECT * FROM persona WHERE " + campo + " LIKE ? and tipo_persona = 'Docente'";
