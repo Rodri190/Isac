@@ -503,7 +503,7 @@ public class AdminPanel extends JPanel {
         remove(scrollPane);
 
         String[] columnas = { "Nombre", "Turno", "Docente", "Facultad", "Inscritos" };
-        String[] datosInteresados = { "Nombre", "Turno", "NombreDocente", "NombreFacultad   ", "Inscritos" };
+        String[] datosInteresados = { "Nombre", "Turno", "NombreDocente", "Nombre", "Inscritos" };
 
         Object[][] datos = convertirDatosMateria(materias, datosInteresados);
 

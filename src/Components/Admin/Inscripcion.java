@@ -17,7 +17,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.geom.Point2D;
-import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
@@ -27,7 +26,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
@@ -35,22 +33,17 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.plaf.basic.BasicScrollBarUI;
-import javax.swing.plaf.metal.MetalScrollBarUI;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
-import org.w3c.dom.events.MouseEvent;
 
-import UI.BotonesUI;
 import UI.GradientBackground;
 import UI.GradientButton;
-import UI.GradientPanel;
 import Utilities.ComponentStyler;
 import Utilities.Fuente;
 import Utilities.Separador;
@@ -60,7 +53,6 @@ import database.model.Persona;
 
 public class Inscripcion extends JPanel {
     private Fuente fuente;
-    private GradientBackground gradient;
     private ComponentStyler styler;
     private Separador esp;
     private Query query;
@@ -82,7 +74,6 @@ public class Inscripcion extends JPanel {
     private JScrollPane scrollPaneMateria;
     private JTable tablaMateria;
     private JTextField buscadorMateria;
-    private String buscarPorMateria;
 
 
 
@@ -91,13 +82,11 @@ public class Inscripcion extends JPanel {
 
     
     public Inscripcion(int alto){
-        gradient = new GradientBackground();
         styler = new ComponentStyler();
         fuente = new Fuente();
         query = new Query();
         esp = new Separador();
         buscarPor = "Nombre";
-        buscarPorMateria = "Nombre";
         setBounds(300, 0, 1040, alto);
         setLayout(null);
         initComponents();
