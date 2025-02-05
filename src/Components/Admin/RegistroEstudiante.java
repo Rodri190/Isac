@@ -2,8 +2,12 @@ package Components.Admin;
 import javax.swing.*;
 
 import UI.GradientBackground;
+import database.Query;
 
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.time.LocalDate;
 
 public class RegistroEstudiante extends JPanel {
     String color1;
@@ -12,6 +16,8 @@ public class RegistroEstudiante extends JPanel {
 
     private static final int ALTURA = 900;
     private static final int ANCHO = 1040;
+    private BarraLateral barraLateral;
+    private Query query;
     
     @Override
     protected void paintComponent(Graphics g) {
@@ -19,7 +25,9 @@ public class RegistroEstudiante extends JPanel {
         gradien.ponerFondoGradiente(g, getWidth(), getHeight(), Color.decode("#02023a"),Color.decode("#1bb1df"));// 02023a     1bb1df
     }
     
-    public RegistroEstudiante(){
+    public RegistroEstudiante(BarraLateral barraLateral, Query query){
+        this.barraLateral = barraLateral;
+        this.query = query;
         gradien = new GradientBackground();
         setLocation(300,0);
         
@@ -129,6 +137,44 @@ public class RegistroEstudiante extends JPanel {
         btnGuardar.setBackground(Color.GREEN);
         btnGuardar.setForeground(Color.WHITE);
         btnGuardar.setFont(new Font("Serif", Font.PLAIN, 25)); 
+
+        btnGuardar.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e){
+                String nombre = txtNombre.getText();
+                String apellidos = txtApellidos.getText();
+                String ci = txtCi.getText();
+                String celular = txtCel.getText();
+                String carrera = txtCarrera.getText();
+                String correo = txtCorreo.getText();
+                // String facultad = cbFacultad.getSelectedItem().toString();
+                // String turno = "";
+                // if(chkManana.isSelected()){
+                //     turno = "Mañana";
+                // }else if(chkTarde.isSelected()){
+                //     turno = "Tarde";
+                // }
+
+                
+                // Persona persona = new Persona(nombre, apellidos, ci, celular, correo, "Estudiante", "Activo");
+                // barraLateral.crearNuevaPersona(persona);
+
+                query.insertarPersona(nombre, apellidos, ci, celular, correo, "Estudiante", carrera, LocalDate.now());
+
+                //para limpiar los campos
+                txtNombre.setText("");
+                txtApellidos.setText("");
+                txtCi.setText("");
+                txtCel.setText("");
+                txtCarrera.setText("");
+                txtCorreo.setText("");
+                cbFacultad.setSelectedIndex(0);
+                chkManana.setSelected(false);
+                chkTarde.setSelected(false);
+            }
+        });
+
+
         add(btnGuardar);
     }
     

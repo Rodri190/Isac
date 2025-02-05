@@ -23,6 +23,7 @@ import UI.GradientBackground;
 import Utilities.ComponentAligment;
 import Utilities.ComponentStyler;
 import Utilities.Separador;
+import database.Query;
 
 public class BarraLateral extends JPanel {
     private String path;
@@ -32,20 +33,21 @@ public class BarraLateral extends JPanel {
     private GradientBackground gradient;
     private Separador esp;
     private ArrayList<BotonOpcion> botonesOpciones;
-    private JPanel adminPanel;
-    private JPanel panelDifuminado;
+    private JPanel panelActual;
     private JFrame adminFrame;
     private JLabel[] mascaras;
+    private Query query;
 
-    public BarraLateral(int altura, AdminFrame adminFrame, AdminPanel adminPanel) {
+    public BarraLateral(int altura, AdminFrame adminFrame, JPanel panelActual) {
         this.adminFrame = adminFrame;
+        query = new Query();
         path = "src/Resources/img/";
         styler = new ComponentStyler();
         aligment = new ComponentAligment();
         gradient = new GradientBackground();
         botonesOpciones = new ArrayList<>();
         mascaras = new JLabel[4];
-        this.adminPanel = adminPanel;
+        this.panelActual = panelActual;
         esp = new Separador();
         setBounds(0, 0, 300, altura);
         setBackground(Color.decode("#ff0000"));
@@ -100,11 +102,10 @@ public class BarraLateral extends JPanel {
     }
 
     private void initBotones() {
-        String[] texto = { "Vista General", "Agregar Docente", "Agregar Estudiante", "Agregar Materia" };
-        String[] imgPath = { "vistaGeneral.png", "registrarDocente.png", "registrarEstudiante.png",
-                "registrarMateria.png" };
+        String[] texto = { "Vista General", "Agregar Docente", "Agregar Estudiante"};
+        String[] imgPath = { "vistaGeneral.png", "registrarDocente.png", "registrarEstudiante.png"};
         BotonOpcion botonOpcion;
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 3; i++) {
             botonOpcion = new BotonOpcion(texto[i],
                     path + imgPath[i],
                     getWidth() - 40,
@@ -175,9 +176,9 @@ public class BarraLateral extends JPanel {
         botonesOpciones.get(0).addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                adminFrame.remove(adminPanel);
-                adminPanel = new AdminPanel(getHeight());
-                adminFrame.add(adminPanel);
+                adminFrame.remove(panelActual);
+                panelActual = new AdminPanel(getHeight(), query.selectTodasLasPersonas());
+                adminFrame.add(panelActual);
                 adminFrame.repaint();
                 adminFrame.revalidate();
                 System.out.println("se cambio a admin");
@@ -187,9 +188,9 @@ public class BarraLateral extends JPanel {
         botonesOpciones.get(1).addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                adminFrame.remove(adminPanel);
-                adminPanel = new RegistroDocente();
-                adminFrame.add(adminPanel);
+                adminFrame.remove(panelActual);
+                panelActual = (RegistroDocente)new RegistroDocente(getThis(), query);
+                adminFrame.add(panelActual);
                 adminFrame.repaint();
                 adminFrame.revalidate();
                 System.out.println("se cambio a docente");
@@ -199,13 +200,17 @@ public class BarraLateral extends JPanel {
         botonesOpciones.get(2).addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                adminFrame.remove(adminPanel);
-                adminPanel = new RegistroEstudiante();
-                adminFrame.add(adminPanel);
+                adminFrame.remove(panelActual);
+                panelActual = (RegistroEstudiante)new RegistroEstudiante(getThis(), query);
+                adminFrame.add(panelActual);
                 adminFrame.repaint();
                 adminFrame.revalidate();
                 System.out.println("se cambio a estudiante");
             }
         });
+    }
+
+    private BarraLateral getThis(){
+        return this;
     }
 }
