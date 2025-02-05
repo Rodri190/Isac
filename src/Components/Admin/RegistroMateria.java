@@ -31,6 +31,10 @@ import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
 import javax.swing.Timer;
 
 import UI.GradientBackground;
@@ -144,6 +148,7 @@ public class RegistroMateria extends JPanel {
         initMensajeError();
         initMensajeExitoso();
         initMesajeAlerta();
+        aplicarFiltroSoloLetras();
     }
 
     private void initTituloRegistroLabel() {
@@ -623,6 +628,26 @@ public class RegistroMateria extends JPanel {
             protected void configureScrollBarColors() {
                 this.thumbColor = Color.decode("#E2103C");
                 this.trackColor = Color.decode("#8F075B");
+            }
+        });
+    }
+
+    private void aplicarFiltroSoloLetras() {
+        ((AbstractDocument) nombreField.getDocument()).setDocumentFilter(new DocumentFilter() {
+            @Override
+            public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr)
+                    throws BadLocationException {
+                if (string.matches("[a-zA-Z ]+") || string.isEmpty()) {
+                    super.insertString(fb, offset, string, attr);
+                }
+            }
+
+            @Override
+            public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
+                    throws BadLocationException {
+                if (text.matches("[a-zA-Z ]+") || text.isEmpty()) {
+                    super.replace(fb, offset, length, text, attrs);
+                }
             }
         });
     }

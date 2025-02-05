@@ -117,6 +117,7 @@ class RegistroDocente extends JPanel {
         JOptionPane.showMessageDialog(this, "Docente registrado correctamente.", "Éxito",
                 JOptionPane.INFORMATION_MESSAGE);
         limpiarCampos();
+        repaint();
     }
 
     private void limpiarCampos() {
@@ -127,26 +128,22 @@ class RegistroDocente extends JPanel {
         txtCorreo.setText("");
     }
 
-
     private void aplicarFiltroNumerico(JTextField textField) {
         ((AbstractDocument) textField.getDocument()).setDocumentFilter(new DocumentFilter() {
             @Override
-            public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
-                if (string.matches("\\d+")) { 
+            public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr)
+                    throws BadLocationException {
+                if (string.matches("\\d+") || string.isEmpty()) {
                     super.insertString(fb, offset, string, attr);
                 }
             }
 
             @Override
-            public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
-                if (text.matches("\\d+")) {
+            public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
+                    throws BadLocationException {
+                if (text.matches("\\d+") || text.isEmpty()) {
                     super.replace(fb, offset, length, text, attrs);
                 }
-            }
-
-            @Override
-            public void remove(FilterBypass fb, int offset, int length) throws BadLocationException {
-                super.remove(fb, offset, length); 
             }
         });
     }
@@ -160,15 +157,17 @@ class RegistroDocente extends JPanel {
     private void aplicarFiltroSoloLetras(JTextField textField) {
         ((AbstractDocument) textField.getDocument()).setDocumentFilter(new DocumentFilter() {
             @Override
-            public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
-                if (string.matches("[a-zA-Z ]+")) { 
+            public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr)
+                    throws BadLocationException {
+                if (string.matches("[a-zA-Z ]+") || string.isEmpty()) {
                     super.insertString(fb, offset, string, attr);
                 }
             }
 
             @Override
-            public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
-                if (text.matches("[a-zA-Z ]+")) { 
+            public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
+                    throws BadLocationException {
+                if (text.matches("[a-zA-Z ]+") || text.isEmpty()) {
                     super.replace(fb, offset, length, text, attrs);
                 }
             }
