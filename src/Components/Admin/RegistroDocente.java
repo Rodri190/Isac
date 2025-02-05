@@ -132,7 +132,6 @@ class RegistroDocente extends JPanel {
         cbFacultad.setSelectedIndex(0);
     }
 
-
     private void aplicarFiltroNumerico(JTextField textField) {
         ((AbstractDocument) textField.getDocument()).setDocumentFilter(new DocumentFilter() {
             @Override

@@ -45,11 +45,11 @@ public class RegistroEstudiante extends JPanel {
         titulo = agregarElemento("Registro De Estudiante", 60, 150, 80, 800, 75, "#17afd6", "#092b66");
         lblNombre = agregarElemento("Nombre", 50, 150, 200, 400, 55);
         txtNombre = agregarText(250, 260, 200, 35);
-        aplicarFiltroSoloLetras(txtApellidos);
+        
 
         lblApellidos = agregarElemento("Apellidos", 50, 450, 200, 500, 55);
         txtApellidos = agregarText(600, 260, 200, 35);
-        aplicarFiltroSoloLetras(txtApellidos);
+        
 
         lblCi = agregarElemento("C.I", 50, 250, 300, 100, 40);
         txtCi = agregarText(250, 350, 200, 35);
@@ -79,6 +79,9 @@ public class RegistroEstudiante extends JPanel {
                 guardarEstudiante();
             }
         });
+
+        aplicarFiltroSoloLetras(txtApellidos);
+        aplicarFiltroSoloLetras(txtApellidos);
     }
 
     private JLabel agregarElemento(String texto, int tamanio, int x, int y, int ancho, int alto) {
