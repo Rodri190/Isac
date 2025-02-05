@@ -2,16 +2,13 @@ package Components.Admin;
 
 import UI.GradientBackground;
 import UI.GradientButton;
-import UI.GradientComboBox;
 import UI.GradientLabel;
 import UI.GradientTextField;
 import database.Query;
-
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.time.LocalDate;
-
 import javax.swing.*;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
@@ -117,7 +114,7 @@ class RegistroDocente extends JPanel {
         
 
         query.insertarPersona(nombre, apellidos, ci, celular, correo, "Docente", "", LocalDate.now());
-        JOptionPane.showMessageDialog(this, "Estudiante registrado correctamente.", "Éxito",
+        JOptionPane.showMessageDialog(this, "Docente registrado correctamente.", "Éxito",
                 JOptionPane.INFORMATION_MESSAGE);
         limpiarCampos();
     }
