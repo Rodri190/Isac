@@ -46,7 +46,7 @@ public class BarraLateral extends JPanel {
         aligment = new ComponentAligment();
         gradient = new GradientBackground();
         botonesOpciones = new ArrayList<>();
-        mascaras = new JLabel[4];
+        mascaras = new JLabel[5];
         this.panelActual = panelActual;
         esp = new Separador();
         setBounds(0, 0, 300, altura);
@@ -102,10 +102,10 @@ public class BarraLateral extends JPanel {
     }
 
     private void initBotones() {
-        String[] texto = { "Vista General", "Agregar Docente", "Agregar Estudiante", "Agregar Materia" };
-        String[] imgPath = { "vistaGeneral.png", "registrarDocente.png", "registrarEstudiante.png", "registrarMateria.png" };
+        String[] texto = { "Vista General", "Agregar Docente", "Agregar Estudiante", "Agregar Materia", "Inscribir Estudiante" };
+        String[] imgPath = { "vistaGeneral.png", "registrarDocente.png", "registrarEstudiante.png", "registrarMateria.png", "inscripcion.png" };
         BotonOpcion botonOpcion;
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 5; i++) {
             botonOpcion = new BotonOpcion(texto[i],
                     path + imgPath[i],
                     getWidth() - 40,
@@ -217,7 +217,19 @@ public class BarraLateral extends JPanel {
                 adminFrame.add(panelActual);
                 adminFrame.repaint();
                 adminFrame.revalidate();
-                System.out.println("se cambio a estudiante");
+                System.out.println("se cambio a materia");
+            }
+        });
+
+        botonesOpciones.get(4).addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                adminFrame.remove(panelActual);
+                panelActual = (Inscripcion)new Inscripcion(getHeight());
+                adminFrame.add(panelActual);
+                adminFrame.repaint();
+                adminFrame.revalidate();
+                System.out.println("se cambio a inscrpcion");
             }
         });
     }

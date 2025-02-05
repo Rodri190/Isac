@@ -58,5 +58,9 @@ public class Persona {
     public String getFechaRegistro(){
         return fechaRegistro;
     }
+
+    public String getNombreCompleto(){
+        return nombre + " " + apellido;
+    }
 }
 

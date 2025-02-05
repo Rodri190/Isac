@@ -1,6 +1,10 @@
 package Components.Admin;
 
 import UI.GradientBackground;
+import UI.GradientButton;
+import UI.GradientComboBox;
+import UI.GradientLabel;
+import UI.GradientTextField;
 import database.Query;
 
 import java.awt.*;
@@ -9,12 +13,17 @@ import java.awt.event.MouseEvent;
 import java.time.LocalDate;
 
 import javax.swing.*;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
 
 class RegistroDocente extends JPanel {
-    String color1;
-    String color2;
     GradientBackground gradien;
-
+    JLabel titulo, lblNombre, lblApellidos, lblCi, lblFacultad, lblCorreo, lblCel;
+    JTextField txtNombre, txtApellidos, txtCi, txtCorreo, txtCel;
+    JButton btnGuardar, btnCancelar;
+    JComboBox<String> cbFacultad;
     private static final int ALTURA = 850;
     private static final int ANCHO = 1040;
     private Query query;
@@ -22,169 +31,152 @@ class RegistroDocente extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        gradien.ponerFondoGradiente(g, getWidth(), getHeight(), Color.decode("#688e12"), Color.decode("#222a14"));
+        gradien.ponerFondoGradiente(g, getWidth(), getHeight(), Color.white,Color.decode("#efd03f"));
     }
 
     public RegistroDocente(Query query) {
         this.query = query;
         gradien = new GradientBackground();
         setLocation(300, 0);
-
         setLayout(null);
         setSize(ANCHO, ALTURA);
 
-        JLabel titulo = new JLabel("REGISTRO DE DOCENTE", SwingConstants.CENTER);
-        titulo.setFont(new Font("Serif", Font.ITALIC, 30));
-        titulo.setForeground(Color.blue);
-        titulo.setBounds(250, 10, 400, 200);
-        add(titulo);
+        titulo = agregarElemento("Registro De Docente", 60, 150, 80, 800, 75, "#efd03f", "#092b66");
+        lblNombre = agregarElemento("Nombre", 50, 150, 200, 400, 55);
+        txtNombre = agregarText(250, 260, 200, 35);
+        aplicarFiltroSoloLetras(txtNombre);
 
-        JLabel lblNombre = new JLabel("Nombre:");
-        lblNombre.setFont(new Font("Serif", Font.ITALIC, 20));
-        lblNombre.setForeground(Color.WHITE);
-        lblNombre.setBounds(140, 200, 100, 25);
-        add(lblNombre);
-        JTextField txtNombre = new JTextField();
-        txtNombre.setBounds(230, 200, 150, 25);
-        add(txtNombre);
+        lblApellidos = agregarElemento("Apellidos", 50, 450, 200, 500, 55);
+        txtApellidos = agregarText(600, 260, 200, 35);
+        aplicarFiltroSoloLetras(txtApellidos);
 
-        JLabel lblCarrera = new JLabel("Materia:");
-        lblCarrera.setFont(new Font("Serif", Font.ITALIC, 20));
-        lblCarrera.setForeground(Color.WHITE);
-        lblCarrera.setBounds(430, 200, 100, 25);
-        add(lblCarrera);
-        JTextField txtCarrera = new JTextField();
-        txtCarrera.setBounds(530, 200, 120, 25);
-        add(txtCarrera);
+        lblCi = agregarElemento("C.I", 50, 250, 300, 100, 40);
+        txtCi = agregarText(250, 350, 200, 35);
+        aplicarFiltroNumerico(txtCi);
 
-        JLabel lblApellidos = new JLabel("Apellidos:");
-        lblApellidos.setFont(new Font("Serif", Font.ITALIC, 20));
-        lblApellidos.setForeground(Color.WHITE);
-        lblApellidos.setBounds(140, 250, 100, 25);
-        add(lblApellidos);
-        JTextField txtApellidos = new JTextField();
-        txtApellidos.setBounds(230, 250, 150, 25);
-        add(txtApellidos);
+        lblCorreo = agregarElemento("Correo", 50, 550, 300, 300, 40);
+        txtCorreo = agregarText(600, 350, 200, 35);
 
-        JLabel lblFacultad = new JLabel("Facultad:");
-        lblFacultad.setFont(new Font("Serif", Font.ITALIC, 20));
-        lblFacultad.setForeground(Color.WHITE);
-        lblFacultad.setBounds(430, 250, 100, 25);
-        add(lblFacultad);
-        String[] facultades = { "Tecnología", "Economia" };
-        JComboBox<String> cbFacultad = new JComboBox<>(facultades);
-        cbFacultad.setBounds(530, 250, 120, 25);
-        add(cbFacultad);
 
-        JLabel lblCi = new JLabel("CI:");
-        lblCi.setFont(new Font("Serif", Font.ITALIC, 20));
-        lblCi.setForeground(Color.white);
-        lblCi.setBounds(140, 300, 100, 25);
-        add(lblCi);
-        JTextField txtCi = new JTextField();
-        txtCi.setBounds(230, 300, 150, 25);
-        add(txtCi);
+        lblCel = agregarElemento("Cel/telf", 50, 250, 400, 200, 40);
+        txtCel = agregarText(250, 450, 200, 35);
+        aplicarFiltroNumerico(txtCel);
 
-        JLabel lblCorreo = new JLabel("Correo:");
-        lblCorreo.setFont(new Font("Serif", Font.ITALIC, 20));
-        lblCorreo.setForeground(Color.WHITE);
-        lblCorreo.setBounds(140, 350, 100, 25);
-        add(lblCorreo);
-        JTextField txtCorreo = new JTextField();
-        txtCorreo.setBounds(230, 350, 150, 25);
-        add(txtCorreo);
 
-        JLabel lblCel = new JLabel("Cel/telf:");
-        lblCel.setFont(new Font("Serif", Font.ITALIC, 20));
-        lblCel.setForeground(Color.WHITE);
-        lblCel.setBounds(140, 400, 100, 25);
-        add(lblCel);
-        JTextField txtCel = new JTextField();
-        txtCel.setBounds(230, 400, 150, 25);
-        add(txtCel);
-
-        JLabel lTurno = new JLabel("TURNO");
-        lTurno.setFont(new Font("Serif", Font.ITALIC, 20));
-        lTurno.setForeground(Color.WHITE);
-        lTurno.setFont(new Font("Serif", Font.ITALIC, 20));
-        lTurno.setBounds(480, 300, 100, 25);
-        add(lTurno);
-
-        JCheckBox chkManana = new JCheckBox("Mañana");
-        chkManana.setForeground(Color.WHITE);
-        chkManana.setOpaque(false);
-        chkManana.setBounds(430, 340, 130, 25);
-        chkManana.setFont(new Font("Serif", Font.PLAIN, 25));
-        add(chkManana);
-
-        JCheckBox chkTarde = new JCheckBox("Tarde");
-        chkTarde.setForeground(Color.WHITE);
-        chkTarde.setOpaque(false);
-        chkTarde.setBounds(550, 340, 100, 25);
-        chkTarde.setFont(new Font("Serif", Font.PLAIN, 25));
-        add(chkTarde);
-
-        chkManana.addActionListener(e -> {
-            if (chkManana.isSelected()) {
-                chkTarde.setSelected(false);
-            }
-        });
-    
-        chkTarde.addActionListener(e -> {
-            if (chkTarde.isSelected()) {
-                chkManana.setSelected(false);
-            }
-        });
-
-        JButton btnCancelar = new JButton("Cancelar");
-        btnCancelar.setBounds(250, 500, 130, 50);
-        btnCancelar.setBackground(Color.RED);
-        btnCancelar.setForeground(Color.WHITE);
-        btnCancelar.setFont(new Font("Serif", Font.PLAIN, 25));
-        add(btnCancelar);
-
-        JButton btnGuardar = new JButton("Guardar");
-        btnGuardar.setBounds(450, 500, 130, 50);
-        btnGuardar.setBackground(Color.GREEN);
-        btnGuardar.setForeground(Color.WHITE);
-        btnGuardar.setFont(new Font("Serif", Font.PLAIN, 25));
-        btnGuardar.addMouseListener(new MouseAdapter() {
+        GradientButton boton = new GradientButton("Guardar", 700, 600, 200, 50, Color.green, Color.decode("#0dc143"), Color.white, "negrita", 30);
+        add(boton);
+        boton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                String nombre = txtNombre.getText();
-                String apellidos = txtApellidos.getText();
-                String ci = txtCi.getText();
-                String celular = txtCel.getText();
-                String carrera = txtCarrera.getText();
-                String correo = txtCorreo.getText();
-                // String facultad = cbFacultad.getSelectedItem().toString();
-                // String turno = "";
-                // if(chkManana.isSelected()){
-                // turno = "Mañana";
-                // }else if(chkTarde.isSelected()){
-                // turno = "Tarde";
-                // }
-
-                //esto era para guardar en el arrayList cuando no teniamos la base de datos todabia
-                // Persona persona = new Persona(nombre, apellidos, ci, celular, carrera, "Docente", "Activo");
-                // barraLateral.crearNuevaPersona(persona);
-
-                query.insertarPersona(nombre, apellidos, ci, celular, correo, "Docente", "", LocalDate.now());
-
-                //para limpiar los campos
-                txtNombre.setText("");
-                txtApellidos.setText("");
-                txtCi.setText("");
-                txtCel.setText("");
-                txtCarrera.setText("");
-                txtCorreo.setText("");
-                cbFacultad.setSelectedIndex(0);
-                chkManana.setSelected(false);
-                chkTarde.setSelected(false);
-
+                guardarEstudiante();
             }
         });
-        add(btnGuardar);
     }
 
+    private JLabel agregarElemento(String texto, int tamanio, int x, int y, int ancho, int alto) {
+        GradientLabel label = new GradientLabel(texto, Color.black, Color.decode("#0ef3ff"), tamanio);
+        label.setBounds(x, y, ancho, alto);
+        add(label);
+        return label;
+    }
+
+    private JLabel agregarElemento(String texto, int tamanio, int x, int y, int ancho, int alto, String color1,
+            String color2) {
+        GradientLabel label = new GradientLabel(texto, Color.decode(color1), Color.decode(color2), tamanio);
+        label.setBounds(x, y, ancho, alto);
+        add(label);
+        return label;
+    }
+
+    private JTextField agregarText(int x, int y, int ancho, int alto) {
+        GradientTextField textField = new GradientTextField(Color.decode("#60026c"), Color.decode("#e4103b"), 5);
+        textField.setBounds(x, y, ancho, alto);
+        textField.setFont(new Font("Arial", Font.PLAIN, 20));
+        textField.setForeground(Color.BLACK);
+        add(textField);
+        return textField;
+    }
+
+    private void guardarEstudiante() {
+        String nombre = txtNombre.getText().trim();
+        String apellidos = txtApellidos.getText().trim();
+        String ci = txtCi.getText().trim();
+        String celular = txtCel.getText().trim();
+        String correo = txtCorreo.getText().trim();
+        String facultad = (String) cbFacultad.getSelectedItem();
+
+        if (nombre.isEmpty() || apellidos.isEmpty() || ci.isEmpty() || celular.isEmpty() || correo.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios.", "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (!esCorreoValido(txtCorreo)) {
+            JOptionPane.showMessageDialog(this, "Ingrese un correo válido con dominio @gmail.com, @hotmail.com, etc.", "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+
+        query.insertarPersona(nombre, apellidos, ci, celular, correo, "Estudiante", facultad, LocalDate.now());
+        JOptionPane.showMessageDialog(this, "Estudiante registrado correctamente.", "Éxito",
+                JOptionPane.INFORMATION_MESSAGE);
+        limpiarCampos();
+    }
+
+    private void limpiarCampos() {
+        txtNombre.setText("");
+        txtApellidos.setText("");
+        txtCi.setText("");
+        txtCel.setText("");
+        txtCorreo.setText("");
+        cbFacultad.setSelectedIndex(0);
+    }
+
+
+    private void aplicarFiltroNumerico(JTextField textField) {
+        ((AbstractDocument) textField.getDocument()).setDocumentFilter(new DocumentFilter() {
+            @Override
+            public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
+                if (string.matches("\\d+")) { 
+                    super.insertString(fb, offset, string, attr);
+                }
+            }
+
+            @Override
+            public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
+                if (text.matches("\\d+")) {
+                    super.replace(fb, offset, length, text, attrs);
+                }
+            }
+
+            @Override
+            public void remove(FilterBypass fb, int offset, int length) throws BadLocationException {
+                super.remove(fb, offset, length); 
+            }
+        });
+    }
+
+    private boolean esCorreoValido(JTextField textField) {
+        String correo = textField.getText().trim();
+        String regex = "^[a-zA-Z0-9._%+-]+@(gmail\\.com|hotmail\\.com|outlook\\.com|yahoo\\.com)$";
+        return correo.matches(regex);
+    }
+
+    private void aplicarFiltroSoloLetras(JTextField textField) {
+        ((AbstractDocument) textField.getDocument()).setDocumentFilter(new DocumentFilter() {
+            @Override
+            public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
+                if (string.matches("[a-zA-Z]+")) { 
+                    super.insertString(fb, offset, string, attr);
+                }
+            }
+
+            @Override
+            public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
+                if (text.matches("[a-zA-Z]+")) { 
+                    super.replace(fb, offset, length, text, attrs);
+                }
+            }
+        });
+    }
 }

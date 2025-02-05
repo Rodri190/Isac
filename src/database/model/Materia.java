@@ -5,16 +5,22 @@ public class Materia {
     private int id;
     private String nombre;
     private String turno;
-    private String idFacultad;
-    private String idDocente;
+    private int idFacultad;
+    private int idDocente;
+    private String nombreFacultad;
+    private String nombreDocente;
+    // private int inscritos;
 
     // Constructor
-    public Materia(int id, String nombre, String turno, String idFacultad, String idDocente) {
+    public Materia(int id, String nombre, String turno, int idFacultad, int idDocente, String nombreDocente, String nombreFacultad) {
         this.id = id;
         this.nombre = nombre;
         this.turno = turno;
         this.idFacultad = idFacultad;
         this.idDocente = idDocente;
+        this.nombreFacultad = nombreFacultad;
+        this.nombreDocente = nombreDocente;
+        // this.inscritos = inscritos;
     }
 
     // Getters
@@ -30,11 +36,25 @@ public class Materia {
         return turno;
     }
 
-    public String getIdFacultad() {
+    public int getIdFacultad() {
         return idFacultad;
     }
 
-    public String getIdDocente() {
+    public int getIdDocente() {
         return idDocente;
     }
+
+    public String getNombreFacultad() {
+        return nombreFacultad;
+    }
+
+    public String getNombreDocente() {
+        return nombreDocente;
+    }
+
+    // public int getInscritos(){
+    //     return inscritos;
+    // }
+
+    
 }
