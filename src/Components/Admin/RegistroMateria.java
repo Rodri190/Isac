@@ -248,22 +248,19 @@ public class RegistroMateria extends JPanel {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index,
                     boolean isSelected, boolean cellHasFocus) {
-                // Llamar al método de la clase padre para configurar el texto y otros aspectos
                 JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected,
                         cellHasFocus);
 
-                // Alinear el texto horizontalmente (por ejemplo, a la derecha)
                 label.setHorizontalAlignment(SwingConstants.CENTER);
 
                 if (isSelected) {
-                    label.setBackground(Color.decode("#9A0957")); // Color de fondo cuando está seleccionado
-                    label.setForeground(Color.WHITE); // Color del texto cuando está seleccionado
+                    label.setBackground(Color.decode("#9A0957")); 
+                    label.setForeground(Color.WHITE); 
                 } else {
-                    label.setBackground(Color.WHITE); // Color de fondo por defecto
-                    label.setForeground(Color.BLACK); // Color del texto por defecto
+                    label.setBackground(Color.WHITE);
+                    label.setForeground(Color.BLACK); 
                 }
 
-                // Devolver el JLabel personalizado
                 return label;
             }
         });
@@ -428,7 +425,22 @@ public class RegistroMateria extends JPanel {
         // Color.decode("#9D0956"), Color.decode("#5B026F"));
         registrarBtn.setLocation(810, 730);
         agregarEventoRegistrar();
+        hoverEffectRegistrarBtn();
         add(registrarBtn);
+    }
+
+    private void hoverEffectRegistrarBtn(){
+        registrarBtn.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e){
+                registrarBtn.setBorder(new LineBorder(Color.decode("#F47725"), 4));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e){
+                registrarBtn.setBorder(null);
+            }
+        });
     }
 
     private void agregarEventoRegistrar() {

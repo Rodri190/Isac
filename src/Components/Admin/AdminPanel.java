@@ -8,19 +8,27 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.LinearGradientPaint;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
 import java.lang.reflect.Array;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.plaf.metal.MetalScrollBarUI;
@@ -33,7 +41,9 @@ import UI.GradientBackground;
 import UI.GradientPanel;
 import Utilities.ComponentStyler;
 import Utilities.Fuente;
+import Utilities.Separador;
 import database.Query;
+import database.model.Materia;
 import database.model.Persona;
 
 import java.time.LocalDate;
@@ -52,6 +62,10 @@ public class AdminPanel extends JPanel {
     private JScrollPane scrollPane;
     private JTable tabla;
     private Query query;
+    private JComboBox<String> opcionesFiltro;
+    private JLabel filtroLabel;
+    private Separador esp;
+    private JTextField focusFalso;
 
     public AdminPanel(int alto, ArrayList<Persona> personas) {
         gradientPanel = new GradientPanel();
@@ -59,11 +73,16 @@ public class AdminPanel extends JPanel {
         styler = new ComponentStyler();
         fuente = new Fuente();
         query = new Query();
+        esp = new Separador();
         setBackground(Color.decode("#ffffff"));
         setBounds(300, 0, 1040, alto);
         setLayout(null);
         initTabla(personas);
         initComponents();
+        focusFalso = new JTextField();
+        focusFalso.setFocusable(true);
+        add(focusFalso);
+        SwingUtilities.invokeLater(() -> focusFalso.requestFocusInWindow());
     }
 
     @Override
@@ -98,7 +117,7 @@ public class AdminPanel extends JPanel {
         }
     }
 
-    private ArrayList<String> getArrayDeTotales(){
+    private ArrayList<String> getArrayDeTotales() {
         ArrayList<String> totales = new ArrayList<>();
         totales.add(query.selectTotalEstudiantes());
         totales.add(query.selectTotalDocentes());
@@ -108,6 +127,8 @@ public class AdminPanel extends JPanel {
 
     private void initComponents() {
         initTituloTabla();
+        initFiltroLabel();
+        initFiltroOpciones();
     }
 
     private void initTituloTabla() {
@@ -116,29 +137,23 @@ public class AdminPanel extends JPanel {
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
 
-                // Crear un Graphics2D para dibujar con gradiente
                 Graphics2D g2d = (Graphics2D) g;
 
-                // Definir el texto y la fuente
                 String texto = "Personas de la intitucion";
                 Font font = fuente.getFuente("negrita", 25);
                 g2d.setFont(font);
 
-                // Obtener el tamaño del texto
                 FontMetrics metrics = g2d.getFontMetrics();
                 int textoWidth = metrics.stringWidth(texto);
                 int textoHeight = metrics.getHeight();
 
-                // Definir los puntos para el gradiente
                 Point2D inicio = new Point2D.Float(0, 0);
                 Point2D fin = new Point2D.Float(textoWidth, textoHeight);
                 float[] distancias = { 0.0f, 1.0f };
                 Color[] colores = { Color.RED, Color.BLUE };
 
-                // Crear el gradiente
                 LinearGradientPaint gradiente = new LinearGradientPaint(inicio, fin, distancias, colores);
 
-                // Aplicar el gradiente al texto
                 g2d.setPaint(gradiente);
 
                 // Dibujar el texto en el centro del panel
@@ -155,12 +170,11 @@ public class AdminPanel extends JPanel {
         add(tituloTabla);
     }
 
-
     // para la tabla
     private void initTabla(ArrayList<Persona> personas) {
         String[] columnas = { "Nombre", "E-mail", "Tipo", "Se unio", "Estado" };
-
-        Object[][] datos = convertirDatos(personas);
+        String[] datosInteresados = { "Nombre", "Email", "TipoPersona", "FechaRegistro", "Estado" };
+        Object[][] datos = convertirDatosPersona(personas, datosInteresados);
 
         modelo = new DefaultTableModel(datos, columnas);
         tabla = new JTable(modelo);
@@ -183,15 +197,46 @@ public class AdminPanel extends JPanel {
         add(scrollPane);
     }
 
-    private Object[][] convertirDatos(ArrayList<Persona> personas) {
-        Object[][] datos = new Object[personas.size()][8];
+    private Object[][] convertirDatosPersona(ArrayList<Persona> personas, String[] campos) {
+        Object[][] datos = new Object[personas.size()][campos.length];
+
         for (int i = 0; i < personas.size(); i++) {
             Persona persona = personas.get(i);
-            datos[i][0] = persona.getNombre();
-            datos[i][1] = persona.getEmail();
-            datos[i][2] = persona.getTipoPersona();
-            datos[i][3] = persona.getFechaRegistro();
-            datos[i][4] = persona.getEstado();
+            for (int j = 0; j < campos.length; j++) {
+                String campo = campos[j];
+                try {
+                    String metodoGetter = "get" + campo.substring(0, 1).toUpperCase() + campo.substring(1);
+
+                    Method metodo = Persona.class.getMethod(metodoGetter);
+
+                    datos[i][j] = metodo.invoke(persona);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    datos[i][j] = null;
+                }
+            }
+        }
+        return datos;
+    }
+
+    private Object[][] convertirDatosMateria(ArrayList<Materia> materias, String[] campos) {
+        Object[][] datos = new Object[materias.size()][campos.length];
+
+        for (int i = 0; i < materias.size(); i++) {
+            Materia materia = materias.get(i);
+            for (int j = 0; j < campos.length; j++) {
+                String campo = campos[j];
+                try {
+                    String metodoGetter = "get" + campo.substring(0, 1).toUpperCase() + campo.substring(1);
+
+                    Method metodo = Materia.class.getMethod(metodoGetter);
+
+                    datos[i][j] = metodo.invoke(materia);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    datos[i][j] = null;
+                }
+            }
         }
         return datos;
     }
@@ -211,18 +256,14 @@ public class AdminPanel extends JPanel {
                 JLabel celda = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row,
                         column);
 
-                // Quitar todos los bordes de la celda
                 celda.setBorder(BorderFactory.createEmptyBorder());
 
-                // Solo dejar el borde inferior
                 if (row == table.getRowCount() - 1) {
                     celda.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.GRAY));
                 }
 
-                // Alinear al centro
                 celda.setHorizontalAlignment(SwingConstants.CENTER);
 
-                // Cambiar la fuente
                 celda.setFont(fuente.getFuente("normal", 17));
 
                 return celda;
@@ -235,8 +276,9 @@ public class AdminPanel extends JPanel {
     }
 
     private void estilizarScrollBar() {
+        // Estilizar la barra de desplazamiento vertical
         JScrollBar verticalScroll = scrollPane.getVerticalScrollBar();
-
+    
         verticalScroll.setUI(new BasicScrollBarUI() {
             @Override
             protected JButton createDecreaseButton(int orientation) {
@@ -244,20 +286,249 @@ public class AdminPanel extends JPanel {
                 button.setBackground(Color.DARK_GRAY); // Cambiar el color del botón de desplazamiento
                 return button;
             }
-
+    
             @Override
             protected JButton createIncreaseButton(int orientation) {
                 JButton button = super.createIncreaseButton(orientation);
                 button.setBackground(Color.DARK_GRAY); // Cambiar el color del botón de desplazamiento
                 return button;
             }
-
+    
             @Override
             protected void configureScrollBarColors() {
                 this.thumbColor = Color.decode("#E2103C"); // Color de la barra deslizante
                 this.trackColor = Color.decode("#8F075B"); // Color de la pista
             }
         });
+    
+        // Estilizar la barra de desplazamiento horizontal
+        JScrollBar horizontalScroll = scrollPane.getHorizontalScrollBar();
+    
+        horizontalScroll.setUI(new BasicScrollBarUI() {
+            @Override
+            protected JButton createDecreaseButton(int orientation) {
+                JButton button = super.createDecreaseButton(orientation);
+                button.setBackground(Color.DARK_GRAY); // Cambiar el color del botón de desplazamiento
+                return button;
+            }
+    
+            @Override
+            protected JButton createIncreaseButton(int orientation) {
+                JButton button = super.createIncreaseButton(orientation);
+                button.setBackground(Color.DARK_GRAY); // Cambiar el color del botón de desplazamiento
+                return button;
+            }
+    
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = Color.decode("#E2103C"); // Color de la barra deslizante
+                this.trackColor = Color.decode("#8F075B"); // Color de la pista
+            }
+        });
+    }
+    
+
+    // para cambiar la visualizacion de los datos en las tablas
+
+    private void initFiltroLabel() {
+        filtroLabel = new JLabel("Mostrar por:");
+        styler.style(filtroLabel, 150, 40, null, "negrita", 22, Color.decode("#762C8F"));
+        filtroLabel.setLocation(esp.separarHorizontal(tituloTabla, 360), tituloTabla.getY());
+        // filtroLabel.setBorder(new LineBorder(Color.red, 3));
+        filtroLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        add(filtroLabel);
+    }
+
+    private void initFiltroOpciones() {
+        opcionesFiltro = new JComboBox<>();
+        opcionesFiltro.addItem("General");
+        opcionesFiltro.addItem("Docentes");
+        opcionesFiltro.addItem("Estudiantes");
+        opcionesFiltro.addItem("Materias");
+        opcionesFiltro.addItem("Facultades");
+        styler.style(opcionesFiltro, 150, 40, Color.decode("#BE0C4A"), "normal", 20, Color.decode("#ffffff"));
+        opcionesFiltro.setLocation(filtroLabel.getX() + filtroLabel.getWidth(), filtroLabel.getY());
+
+        personalizarComboBox(opcionesFiltro);
+        agregarEventoOpciones();
+        add(opcionesFiltro);
+    }
+
+    private void agregarEventoOpciones() {
+        opcionesFiltro.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String seleccionado = (String) opcionesFiltro.getSelectedItem();
+
+                switch (seleccionado) {
+                    case "General":
+                        cambiarATablaGeneral(query.selectTodasLasPersonas());
+                        break;
+                    case "Docentes":
+                        cambiarATablaDocente(query.selectTodosLosDocentes());
+                        break;
+                    case "Estudiantes":
+                        cambiarATablaEstudiante(query.selectTodosLosEstudiantes());
+                        break;
+                    case "Materias":
+                        cambiarATablaMateria(query.selectTodasLasMaterias());
+                        break;
+                    default:
+                }
+                repaint();
+                revalidate();
+            }
+        });
+    }
+
+    private void personalizarComboBox(JComboBox<String> combo) {
+        combo.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                    boolean isSelected, boolean cellHasFocus) {
+                JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected,
+                        cellHasFocus);
+
+                label.setHorizontalAlignment(SwingConstants.CENTER);
+
+                if (isSelected) {
+                    label.setBackground(Color.decode("#9A0957"));
+                    label.setForeground(Color.WHITE);
+                } else {
+                    label.setBackground(Color.WHITE);
+                    label.setForeground(Color.BLACK);
+                }
+
+                return label;
+            }
+        });
+    }
+
+    private void cambiarATablaGeneral(ArrayList<Persona> personas) {
+        // tabla.setModel(new DefaultTableModel());
+        remove(scrollPane);
+        String[] columnas = { "Nombre", "E-mail", "Tipo", "Se unio", "Estado" };
+        String[] datosInteresados = { "Nombre", "Email", "TipoPersona", "FechaRegistro", "Estado" };
+
+        Object[][] datos = convertirDatosPersona(personas, datosInteresados);
+
+        modelo = new DefaultTableModel(datos, columnas);
+        tabla = new JTable(modelo);
+
+        // para el ancho de las columnas
+        tabla.getColumnModel().getColumn(1).setPreferredWidth(100);
+        tabla.getColumnModel().getColumn(2).setPreferredWidth(30);
+        tabla.getColumnModel().getColumn(3).setPreferredWidth(30);
+        tabla.getColumnModel().getColumn(4).setPreferredWidth(50);
+
+        // para el encabezado
+        estilizarTablaEncabezado();
+        tabla.setRowHeight(50);
+        scrollPane = new JScrollPane(tabla);
+        scrollPane.setBounds(30, 30 + 175 + 30 + 50 + 30 + 30, 960, 450);
+
+        // para el scroll
+        estilizarScrollBar();
+
+        add(scrollPane);
+    }
+
+    private void cambiarATablaDocente(ArrayList<Persona> docentes) {
+        remove(scrollPane);
+        String[] columnas = { "Nombre", "C.I.", "Celular", "E-mail", "Tipo", "Estado", "Se unio" };
+        String[] datosInteresados = { "NombreCompleto", "Ci", "Celular", "Email", "TipoPersona", "Estado",
+                "FechaRegistro" };
+        Object[][] datos = convertirDatosPersona(docentes, datosInteresados);
+
+        modelo = new DefaultTableModel(datos, columnas);
+        tabla = new JTable(modelo);
+
+        tabla.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        // JScrollPane scrollPane = new JScrollPane(tabla);
+        tabla.setFillsViewportHeight(true);
+        // para el ancho de las columnas
+        tabla.getColumnModel().getColumn(0).setPreferredWidth(250);
+        tabla.getColumnModel().getColumn(1).setPreferredWidth(150);
+        tabla.getColumnModel().getColumn(2).setPreferredWidth(150);
+        tabla.getColumnModel().getColumn(3).setPreferredWidth(250);
+        tabla.getColumnModel().getColumn(4).setPreferredWidth(150);
+        tabla.getColumnModel().getColumn(5).setPreferredWidth(150);
+        tabla.getColumnModel().getColumn(6).setPreferredWidth(150);
+
+
+        // para el encabezado
+        estilizarTablaEncabezado();
+        tabla.setRowHeight(50);
+        scrollPane = new JScrollPane(tabla);
+        scrollPane.setBounds(30, 30 + 175 + 30 + 50 + 30 + 30, 960, 450);
+
+        // para el scroll
+        estilizarScrollBar();
+
+        add(scrollPane);
+    }
+
+    private void cambiarATablaEstudiante(ArrayList<Persona> estudiantes) {
+        remove(scrollPane);
+        String[] columnas = { "Nombre", "C.I.", "Celular", "E-mail", "Tipo", "Estado", "Se unio" };
+        String[] datosInteresados = { "NombreCompleto", "Ci", "Celular", "Email", "TipoPersona", "Estado",
+                "FechaRegistro" };
+        Object[][] datos = convertirDatosPersona(estudiantes, datosInteresados);
+
+        modelo = new DefaultTableModel(datos, columnas);
+        tabla = new JTable(modelo);
+
+        tabla.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        // JScrollPane scrollPane = new JScrollPane(tabla);
+        tabla.setFillsViewportHeight(true);
+        // para el ancho de las columnas
+        tabla.getColumnModel().getColumn(0).setPreferredWidth(250);
+        tabla.getColumnModel().getColumn(1).setPreferredWidth(150);
+        tabla.getColumnModel().getColumn(2).setPreferredWidth(150);
+        tabla.getColumnModel().getColumn(3).setPreferredWidth(250);
+        tabla.getColumnModel().getColumn(4).setPreferredWidth(150);
+        tabla.getColumnModel().getColumn(5).setPreferredWidth(150);
+        tabla.getColumnModel().getColumn(6).setPreferredWidth(150);
+
+
+        // para el encabezado
+        estilizarTablaEncabezado();
+        tabla.setRowHeight(50);
+        scrollPane = new JScrollPane(tabla);
+        scrollPane.setBounds(30, 30 + 175 + 30 + 50 + 30 + 30, 960, 450);
+
+        // para el scroll
+        estilizarScrollBar();
+
+        add(scrollPane);
+    }
+
+    private void cambiarATablaMateria(ArrayList<Materia> materias) {
+        remove(scrollPane);
+
+        String[] columnas = { "Nombre", "Turno", "Docente", "Facultad" };
+        String[] datosInteresados = { "Nombre", "Turno", "NombreFacultad", "NombreDocente" };
+
+        Object[][] datos = convertirDatosMateria(materias, datosInteresados);
+
+        // Revertir el comportamiento de FillsViewportHeight
+        tabla.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
+        tabla.setFillsViewportHeight(false);
+
+        modelo = new DefaultTableModel(datos, columnas);
+        tabla = new JTable(modelo);
+
+        
+
+        // para el encabezado
+        estilizarTablaEncabezado();
+        tabla.setRowHeight(50);
+        scrollPane = new JScrollPane(tabla);
+        scrollPane.setBounds(30, 30 + 175 + 30 + 50 + 30 + 30, 960, 450);
+
+        // para el scroll
+        estilizarScrollBar();
+        add(scrollPane);
     }
 
 }

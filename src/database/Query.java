@@ -129,9 +129,40 @@ public class Query {
         return docentes;
     }
 
+    public ArrayList<Persona> selectTodosLosEstudiantes() {
+        ArrayList<Persona> docentes = new ArrayList<>();
+        String selectPersonasSQL = "SELECT * FROM persona where tipo_persona = 'Estudiante'";
+        Date fechaSQL;
+        String fechaFormateada;
+
+        try (Connection conn = connection.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(selectPersonasSQL)) {
+
+            pstmt.execute();
+            ResultSet res = pstmt.getResultSet();
+
+            while (res.next()) {
+                fechaSQL = res.getDate("fecha_registro");
+                // Convertir a java.util.Date
+                java.util.Date fechaUtil = new java.util.Date(fechaSQL.getTime());
+
+                // Formatear a "dd-MM-yy"
+                SimpleDateFormat formato = new SimpleDateFormat("dd-MM-yy");
+                fechaFormateada = formato.format(fechaUtil);
+                docentes.add(new Persona(res.getInt("id"), res.getString("nombre"), res.getString("apellido"),
+                        res.getString("ci"), res.getString("celular"), res.getString("email"),
+                        res.getString("tipo_persona"),
+                        res.getString("estado"), fechaFormateada));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return docentes;
+    }
+
     public ArrayList<Materia> selectTodasLasMaterias() {
         ArrayList<Materia> materias = new ArrayList<>();
-        String selectPersonasSQL = "SELECT * FROM materia";
+        String selectPersonasSQL = "SELECT m.*, f.nombre AS nombre_facultad, p.nombre AS nombre_docente FROM facultad f JOIN materia m ON m.id_facultad = f.id JOIN docente d ON m.id_docente = d.id join persona p on d.id_persona = p.id";
 
         try (Connection conn = connection.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(selectPersonasSQL)) {
@@ -144,8 +175,10 @@ public class Query {
                 materias.add(new Materia(res.getInt("id"),
                         res.getString("nombre"),
                         res.getString("turno"),
-                        res.getString("id_facultad"),
-                        res.getString("id_docente")));
+                        res.getInt("id_facultad"),
+                        res.getInt("id_docente"),
+                        res.getString("nombre_facultad"),
+                        res.getString("nombre_docente")));
             }
         } catch (SQLException e) {
             e.printStackTrace();

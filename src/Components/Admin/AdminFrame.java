@@ -26,10 +26,10 @@ public class AdminFrame extends JFrame {
         setSize(ANCHO, ALTURA);
         setLayout(null);
         setLocationRelativeTo(null);
-        setVisible(true);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setResizable(false);
         setBackground(Color.decode("#191c31"));
+        setVisible(true);
         System.out.println(getWidth());
     }
 
