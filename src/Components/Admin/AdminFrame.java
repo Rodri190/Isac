@@ -21,8 +21,9 @@ public class AdminFrame extends JFrame {
         query = new Query();
         AdminPanel adminPanel = new AdminPanel(ALTURA, query.selectTodasLasPersonas());
         // RegistroMateria adminPanel = new RegistroMateria(ALTURA, query, query.selectTodosLosDocentes());
-        add(new BarraLateral(ALTURA, this, adminPanel));
+        // Inscripcion adminPanel = new Inscripcion(ALTURA);
         add(adminPanel);
+        add(new BarraLateral(ALTURA, this, adminPanel));
         setSize(ANCHO, ALTURA);
         setLayout(null);
         setLocationRelativeTo(null);

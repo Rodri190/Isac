@@ -50,21 +50,21 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class AdminPanel extends JPanel {
-    private GradientBackground gradient;
     private JLabel totalEstudiantesPanel;
     private JLabel totalDocentesPanel;
     private BotonesUI boton;
     private GradientPanel gradientPanel;
+    private GradientBackground gradient;
     private JLabel tituloTabla;
     private ComponentStyler styler;
+    private Separador esp;
+    private Query query;
     private Fuente fuente;
     private DefaultTableModel modelo;
     private JScrollPane scrollPane;
     private JTable tabla;
-    private Query query;
     private JComboBox<String> opcionesFiltro;
     private JLabel filtroLabel;
-    private Separador esp;
     private JTextField focusFalso;
 
     public AdminPanel(int alto, ArrayList<Persona> personas) {
@@ -278,55 +278,54 @@ public class AdminPanel extends JPanel {
     private void estilizarScrollBar() {
         // Estilizar la barra de desplazamiento vertical
         JScrollBar verticalScroll = scrollPane.getVerticalScrollBar();
-    
+
         verticalScroll.setUI(new BasicScrollBarUI() {
             @Override
             protected JButton createDecreaseButton(int orientation) {
                 JButton button = super.createDecreaseButton(orientation);
-                button.setBackground(Color.DARK_GRAY); 
+                button.setBackground(Color.DARK_GRAY);
                 return button;
             }
-    
+
             @Override
             protected JButton createIncreaseButton(int orientation) {
                 JButton button = super.createIncreaseButton(orientation);
-                button.setBackground(Color.DARK_GRAY); 
+                button.setBackground(Color.DARK_GRAY);
                 return button;
             }
-    
+
             @Override
             protected void configureScrollBarColors() {
-                this.thumbColor = Color.decode("#E2103C"); 
-                this.trackColor = Color.decode("#8F075B"); 
+                this.thumbColor = Color.decode("#E2103C");
+                this.trackColor = Color.decode("#8F075B");
             }
         });
-    
+
         // Estilizar la barra de desplazamiento horizontal
         JScrollBar horizontalScroll = scrollPane.getHorizontalScrollBar();
-    
+
         horizontalScroll.setUI(new BasicScrollBarUI() {
             @Override
             protected JButton createDecreaseButton(int orientation) {
                 JButton button = super.createDecreaseButton(orientation);
-                button.setBackground(Color.DARK_GRAY); 
+                button.setBackground(Color.DARK_GRAY);
                 return button;
             }
-    
+
             @Override
             protected JButton createIncreaseButton(int orientation) {
                 JButton button = super.createIncreaseButton(orientation);
-                button.setBackground(Color.DARK_GRAY); 
+                button.setBackground(Color.DARK_GRAY);
                 return button;
             }
-    
+
             @Override
             protected void configureScrollBarColors() {
                 this.thumbColor = Color.decode("#E2103C");
-                this.trackColor = Color.decode("#8F075B"); 
+                this.trackColor = Color.decode("#8F075B");
             }
         });
     }
-    
 
     // para cambiar la visualizacion de los datos en las tablas
 
@@ -345,7 +344,6 @@ public class AdminPanel extends JPanel {
         opcionesFiltro.addItem("Docentes");
         opcionesFiltro.addItem("Estudiantes");
         opcionesFiltro.addItem("Materias");
-        opcionesFiltro.addItem("Facultades");
         styler.style(opcionesFiltro, 150, 40, Color.decode("#BE0C4A"), "normal", 20, Color.decode("#ffffff"));
         opcionesFiltro.setLocation(filtroLabel.getX() + filtroLabel.getWidth(), filtroLabel.getY());
 
@@ -455,7 +453,6 @@ public class AdminPanel extends JPanel {
         tabla.getColumnModel().getColumn(5).setPreferredWidth(150);
         tabla.getColumnModel().getColumn(6).setPreferredWidth(150);
 
-
         // para el encabezado
         estilizarTablaEncabezado();
         tabla.setRowHeight(50);
@@ -490,7 +487,6 @@ public class AdminPanel extends JPanel {
         tabla.getColumnModel().getColumn(5).setPreferredWidth(150);
         tabla.getColumnModel().getColumn(6).setPreferredWidth(150);
 
-
         // para el encabezado
         estilizarTablaEncabezado();
         tabla.setRowHeight(50);
@@ -507,7 +503,7 @@ public class AdminPanel extends JPanel {
         remove(scrollPane);
 
         String[] columnas = { "Nombre", "Turno", "Docente", "Facultad", "Inscritos" };
-        String[] datosInteresados = { "Nombre", "Turno", "NombreFacultad", "NombreDocente" };
+        String[] datosInteresados = { "Nombre", "Turno", "NombreDocente", "NombreFacultad   ", "Inscritos" };
 
         Object[][] datos = convertirDatosMateria(materias, datosInteresados);
 
@@ -517,8 +513,6 @@ public class AdminPanel extends JPanel {
 
         modelo = new DefaultTableModel(datos, columnas);
         tabla = new JTable(modelo);
-
-        
 
         // para el encabezado
         estilizarTablaEncabezado();
@@ -530,5 +524,6 @@ public class AdminPanel extends JPanel {
         estilizarScrollBar();
         add(scrollPane);
     }
+
 
 }
