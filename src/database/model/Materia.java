@@ -9,6 +9,7 @@ public class Materia {
     private int idDocente;
     private String nombreFacultad;
     private String nombreDocente;
+    // private int inscritos;
 
     // Constructor
     public Materia(int id, String nombre, String turno, int idFacultad, int idDocente, String nombreDocente, String nombreFacultad) {
@@ -19,6 +20,7 @@ public class Materia {
         this.idDocente = idDocente;
         this.nombreFacultad = nombreFacultad;
         this.nombreDocente = nombreDocente;
+        // this.inscritos = inscritos;
     }
 
     // Getters
@@ -49,6 +51,10 @@ public class Materia {
     public String getNombreDocente() {
         return nombreDocente;
     }
+
+    // public int getInscritos(){
+    //     return inscritos;
+    // }
 
     
 }

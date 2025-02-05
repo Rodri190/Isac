@@ -45,7 +45,7 @@ public class RegistroEstudiante extends JPanel {
         titulo = agregarElemento("Registro De Estudiante", 60, 150, 80, 800, 75, "#17afd6", "#092b66");
         lblNombre = agregarElemento("Nombre", 50, 150, 200, 400, 55);
         txtNombre = agregarText(250, 260, 200, 35);
-        aplicarFiltroSoloLetras(txtApellidos);
+        aplicarFiltroSoloLetras(txtNombre);
 
         lblApellidos = agregarElemento("Apellidos", 50, 450, 200, 500, 55);
         txtApellidos = agregarText(600, 260, 200, 35);
