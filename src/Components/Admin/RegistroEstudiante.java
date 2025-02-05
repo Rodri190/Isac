@@ -2,6 +2,10 @@ package Components.Admin;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
 
 import UI.BotonesUI;
 import UI.GradientBackground;
@@ -28,7 +32,7 @@ public class RegistroEstudiante extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        gradien.ponerFondoGradiente(g, getWidth(), getHeight(), Color.decode("#afa4a6"), Color.white);
+        gradien.ponerFondoGradiente(g, getWidth(), getHeight(), Color.white, Color.decode("#17afd6"));
     }
 
     public RegistroEstudiante(Query query) {
@@ -41,12 +45,16 @@ public class RegistroEstudiante extends JPanel {
         titulo = agregarElemento("Registro De Estudiante", 60, 150, 80, 800, 75, "#17afd6", "#092b66");
         lblNombre = agregarElemento("Nombre", 50, 150, 200, 400, 55);
         txtNombre = agregarText(250, 260, 200, 35);
+        aplicarFiltroSoloLetras(txtApellidos);
 
         lblApellidos = agregarElemento("Apellidos", 50, 450, 200, 500, 55);
         txtApellidos = agregarText(600, 260, 200, 35);
+        aplicarFiltroSoloLetras(txtApellidos);
 
         lblCi = agregarElemento("C.I", 50, 250, 300, 100, 40);
         txtCi = agregarText(250, 350, 200, 35);
+        aplicarFiltroNumerico(txtCi);
+
 
         lblCorreo = agregarElemento("Correo", 50, 550, 300, 300, 40);
         txtCorreo = agregarText(600, 350, 200, 35);
@@ -59,17 +67,11 @@ public class RegistroEstudiante extends JPanel {
 
         lblCel = agregarElemento("Cel/telf", 50, 250, 400, 200, 40);
         txtCel = agregarText(250, 450, 200, 35);
+        aplicarFiltroNumerico(txtCel);
 
-        // // Botones
-        // btnCancelar = agregarBoton("Cancelar", 450, 600, 200, 50, Color.RED);
-        // btnCancelar.addMouseListener(new MouseAdapter() {
-        //     @Override
-        //     public void mouseClicked(MouseEvent e) {
-        //         limpiarCampos();
-        //     }
-        // });
 
-        GradientButton boton = new GradientButton("Guardar", 700, 600, 200, 50, Color.green, Color.decode("#0dc143"), Color.white, "negrita", 30);
+        GradientButton boton = new GradientButton("Guardar", 700, 600, 200, 50, Color.green, Color.decode("#0dc143"),
+                Color.white, "negrita", 30);
         add(boton);
         boton.addMouseListener(new MouseAdapter() {
             @Override
@@ -116,6 +118,12 @@ public class RegistroEstudiante extends JPanel {
                     JOptionPane.ERROR_MESSAGE);
             return;
         }
+        if (!esCorreoValido(txtCorreo)) {
+            JOptionPane.showMessageDialog(this, "Ingrese un correo válido con dominio @gmail.com, @hotmail.com, etc.", "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
 
         query.insertarPersona(nombre, apellidos, ci, celular, correo, "Estudiante", facultad, LocalDate.now());
         JOptionPane.showMessageDialog(this, "Estudiante registrado correctamente.", "Éxito",
@@ -130,5 +138,55 @@ public class RegistroEstudiante extends JPanel {
         txtCel.setText("");
         txtCorreo.setText("");
         cbFacultad.setSelectedIndex(0);
+    }
+
+
+    private void aplicarFiltroNumerico(JTextField textField) {
+        ((AbstractDocument) textField.getDocument()).setDocumentFilter(new DocumentFilter() {
+            @Override
+            public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr)
+                    throws BadLocationException {
+                if (string.matches("\\d+")) { 
+                    super.insertString(fb, offset, string, attr);
+                }
+            }
+
+            @Override
+            public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
+                    throws BadLocationException {
+                if (text.matches("\\d+")) { 
+                    super.replace(fb, offset, length, text, attrs);
+                }
+            }
+
+            @Override
+            public void remove(FilterBypass fb, int offset, int length) throws BadLocationException {
+                super.remove(fb, offset, length); 
+            }
+        });
+    }
+
+    private boolean esCorreoValido(JTextField textField) {
+        String correo = textField.getText().trim();
+        String regex = "^[a-zA-Z0-9._%+-]+@(gmail\\.com|hotmail\\.com|outlook\\.com|yahoo\\.com)$";
+        return correo.matches(regex);
+    }
+    
+    private void aplicarFiltroSoloLetras(JTextField textField) {
+        ((AbstractDocument) textField.getDocument()).setDocumentFilter(new DocumentFilter() {
+            @Override
+            public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
+                if (string.matches("[a-zA-Z]+")) { 
+                    super.insertString(fb, offset, string, attr);
+                }
+            }
+
+            @Override
+            public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
+                if (text.matches("[a-zA-Z]+")) { 
+                    super.replace(fb, offset, length, text, attrs);
+                }
+            }
+        });
     }
 }
