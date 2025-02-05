@@ -9,10 +9,10 @@ public class Materia {
     private int idDocente;
     private String nombreFacultad;
     private String nombreDocente;
-    // private int inscritos;
+    private int inscritos;
 
     // Constructor
-    public Materia(int id, String nombre, String turno, int idFacultad, int idDocente, String nombreDocente, String nombreFacultad) {
+    public Materia(int id, String nombre, String turno, int idFacultad, int idDocente, String nombreDocente, String nombreFacultad, int inscritos) {
         this.id = id;
         this.nombre = nombre;
         this.turno = turno;
@@ -20,7 +20,7 @@ public class Materia {
         this.idDocente = idDocente;
         this.nombreFacultad = nombreFacultad;
         this.nombreDocente = nombreDocente;
-        // this.inscritos = inscritos;
+        this.inscritos = inscritos;
     }
 
     // Getters
@@ -52,9 +52,9 @@ public class Materia {
         return nombreDocente;
     }
 
-    // public int getInscritos(){
-    //     return inscritos;
-    // }
+    public int getInscritos(){
+        return inscritos;
+    }
 
     
 }

@@ -103,7 +103,6 @@ class RegistroDocente extends JPanel {
         String ci = txtCi.getText().trim();
         String celular = txtCel.getText().trim();
         String correo = txtCorreo.getText().trim();
-        String facultad = (String) cbFacultad.getSelectedItem();
 
         if (nombre.isEmpty() || apellidos.isEmpty() || ci.isEmpty() || celular.isEmpty() || correo.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios.", "Error",
@@ -117,7 +116,7 @@ class RegistroDocente extends JPanel {
         }
         
 
-        query.insertarPersona(nombre, apellidos, ci, celular, correo, "Estudiante", facultad, LocalDate.now());
+        query.insertarPersona(nombre, apellidos, ci, celular, correo, "Docente", "", LocalDate.now());
         JOptionPane.showMessageDialog(this, "Estudiante registrado correctamente.", "Éxito",
                 JOptionPane.INFORMATION_MESSAGE);
         limpiarCampos();
@@ -129,7 +128,6 @@ class RegistroDocente extends JPanel {
         txtCi.setText("");
         txtCel.setText("");
         txtCorreo.setText("");
-        cbFacultad.setSelectedIndex(0);
     }
 
 
@@ -166,14 +164,14 @@ class RegistroDocente extends JPanel {
         ((AbstractDocument) textField.getDocument()).setDocumentFilter(new DocumentFilter() {
             @Override
             public void insertString(FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
-                if (string.matches("[a-zA-Z]+")) { 
+                if (string.matches("[a-zA-Z ]+")) { 
                     super.insertString(fb, offset, string, attr);
                 }
             }
 
             @Override
             public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
-                if (text.matches("[a-zA-Z]+")) { 
+                if (text.matches("[a-zA-Z ]+")) { 
                     super.replace(fb, offset, length, text, attrs);
                 }
             }
