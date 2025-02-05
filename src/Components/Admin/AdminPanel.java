@@ -283,21 +283,21 @@ public class AdminPanel extends JPanel {
             @Override
             protected JButton createDecreaseButton(int orientation) {
                 JButton button = super.createDecreaseButton(orientation);
-                button.setBackground(Color.DARK_GRAY); // Cambiar el color del botón de desplazamiento
+                button.setBackground(Color.DARK_GRAY); 
                 return button;
             }
     
             @Override
             protected JButton createIncreaseButton(int orientation) {
                 JButton button = super.createIncreaseButton(orientation);
-                button.setBackground(Color.DARK_GRAY); // Cambiar el color del botón de desplazamiento
+                button.setBackground(Color.DARK_GRAY); 
                 return button;
             }
     
             @Override
             protected void configureScrollBarColors() {
-                this.thumbColor = Color.decode("#E2103C"); // Color de la barra deslizante
-                this.trackColor = Color.decode("#8F075B"); // Color de la pista
+                this.thumbColor = Color.decode("#E2103C"); 
+                this.trackColor = Color.decode("#8F075B"); 
             }
         });
     
@@ -308,21 +308,21 @@ public class AdminPanel extends JPanel {
             @Override
             protected JButton createDecreaseButton(int orientation) {
                 JButton button = super.createDecreaseButton(orientation);
-                button.setBackground(Color.DARK_GRAY); // Cambiar el color del botón de desplazamiento
+                button.setBackground(Color.DARK_GRAY); 
                 return button;
             }
     
             @Override
             protected JButton createIncreaseButton(int orientation) {
                 JButton button = super.createIncreaseButton(orientation);
-                button.setBackground(Color.DARK_GRAY); // Cambiar el color del botón de desplazamiento
+                button.setBackground(Color.DARK_GRAY); 
                 return button;
             }
     
             @Override
             protected void configureScrollBarColors() {
-                this.thumbColor = Color.decode("#E2103C"); // Color de la barra deslizante
-                this.trackColor = Color.decode("#8F075B"); // Color de la pista
+                this.thumbColor = Color.decode("#E2103C");
+                this.trackColor = Color.decode("#8F075B"); 
             }
         });
     }
@@ -506,7 +506,7 @@ public class AdminPanel extends JPanel {
     private void cambiarATablaMateria(ArrayList<Materia> materias) {
         remove(scrollPane);
 
-        String[] columnas = { "Nombre", "Turno", "Docente", "Facultad" };
+        String[] columnas = { "Nombre", "Turno", "Docente", "Facultad", "Inscritos" };
         String[] datosInteresados = { "Nombre", "Turno", "NombreFacultad", "NombreDocente" };
 
         Object[][] datos = convertirDatosMateria(materias, datosInteresados);
