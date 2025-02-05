@@ -14,9 +14,8 @@ public class RegistroEstudiante extends JPanel {
     String color2;
     GradientBackground gradien;
 
-    private static final int ALTURA = 900;
+    private static final int ALTURA = 850;
     private static final int ANCHO = 1040;
-    private BarraLateral barraLateral;
     private Query query;
     
     @Override
@@ -25,8 +24,7 @@ public class RegistroEstudiante extends JPanel {
         gradien.ponerFondoGradiente(g, getWidth(), getHeight(), Color.decode("#02023a"),Color.decode("#1bb1df"));// 02023a     1bb1df
     }
     
-    public RegistroEstudiante(BarraLateral barraLateral, Query query){
-        this.barraLateral = barraLateral;
+    public RegistroEstudiante(Query query){
         this.query = query;
         gradien = new GradientBackground();
         setLocation(300,0);
